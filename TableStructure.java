@@ -7,7 +7,7 @@ public class TableStructure {
 
     private String name;
     private ArrayList<ColumnStructure> columns;
-    private int columnIndex;
+    private int keyIndex;
 
     public TableStructure(String name, ArrayList<ColumnStructure> columns) throws MultiplePrimaryKeysInTableException {
         this.name = name;
@@ -22,7 +22,7 @@ public class TableStructure {
                 }
                 else{
                     hasPrimary = true;
-                    columnIndex = i;
+                    keyIndex = i;
                 }
             }
         }
@@ -38,7 +38,7 @@ public class TableStructure {
         columns.remove(c);
         for(int i = 0; i < columns.size(); i++){
             if(columns.get(i).isPrimaryKey()){
-                columnIndex = i;
+                keyIndex = i;
             }
         }
     }
@@ -51,7 +51,7 @@ public class TableStructure {
             columns.add(c);
             for(int i = 0; i < columns.size(); i++){
                 if(columns.get(i).isPrimaryKey()){
-                    columnIndex = i;
+                    keyIndex = i;
                 }
             }
         }
@@ -102,5 +102,17 @@ public class TableStructure {
         return columns;
     }
 
+
+    public int getKeyIndex(){
+        return keyIndex;
+    }
+
+    public String getTypeByIndex(int index){
+        return columns.get(index).getType();
+    }
+
+    public String getKeyType(){
+        return columns.get(keyIndex).getType();
+    }
 
 }
