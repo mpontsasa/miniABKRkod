@@ -21,7 +21,22 @@ public class Table {
         data.add(onlyRecord);
     }
 
-    public String[] getRecordByKey(String key){
+    public String getKeyValue(int rowIndex){
+
+        int keyIndex = structure.getKeyIndex();
+
+        return data.get(rowIndex)[keyIndex];
+    }
+
+    public String[] getRowByKeyValue(String key){
+
+        int keyIndex = structure.getKeyIndex();
+        for(String[] row : data){
+
+            if(row[keyIndex].equals(key)){
+                return row;
+            }
+        }
         return null;
     }
 }
