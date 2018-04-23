@@ -15,6 +15,12 @@ public class Table {
         this.data = data;
     }
 
+    public Table(TableStructure structure, String[] onlyRecord) {
+        this.structure = structure;
+        data = new ArrayList<>();
+        data.add(onlyRecord);
+    }
+
     public String[] getRecordByKey(String key){
         return null;
     }
