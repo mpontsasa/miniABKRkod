@@ -81,7 +81,6 @@ public class Controller {
         try{
             activeEnviornment.setUpActiveEnviornment(words[2],true);
 
-            //create structure!!!!!!!!!!!!!!!!++++++
             SQLDatabaseStructure databaseStructure = new SQLDatabaseStructure(words[2]);
             databaseStructure.toJson();
 
@@ -189,14 +188,36 @@ public class Controller {
         DatabaseEntry theKey = null;
         DatabaseEntry theData = null;
 
-        getKeyAndData(theKey, theData);
+        String[] values = getValuesForInsert(words);
+
+        if (validateValuesForInsert(values))
 
         activeEnviornment.insertIntoDB(words[2], Arrays.copyOfRange(words, 4, words.length));
     }
 
-    public void getKeyAndData(DatabaseEntry theKey, DatabaseEntry theData)
+    public boolean validateValuesForInsert(String[] values)
     {
+        return true;
+    }
 
+    public String[] getValuesForInsert(String[] words)
+    {
+        String zarojelek = String.join(" ", Arrays.copyOfRange(words, 4, words.length));
+        zarojelek = zarojelek.substring(zarojelek.indexOf("(") + 1, zarojelek.indexOf(")"));
+
+        String[] values = zarojelek.split(",");
+
+        for (int i = 0; i < values.length; i++)
+        {
+            values[i] = values[i].trim();
+
+            if (values[i].substring(0,1).equals("\"") && values[i].substring(values[i].length()-1, values[i].length()).equals("\""))
+            {
+                values[i] = values[i].substring(1,values[i].length()-1);
+            }
+        }
+
+        return values;
     }
 
 
