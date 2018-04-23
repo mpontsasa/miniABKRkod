@@ -61,4 +61,20 @@ public class SQLDatabaseStructure {
     public String getName() {
         return name;
     }
+
+    public ArrayList<TableStructure> getTables() {
+        return tables;
+    }
+
+
+    public TableStructure findTable(String tableName){
+
+        for(TableStructure ts : tables){
+            if(tableName.equals(ts.getName())){
+                return ts;
+            }
+        }
+        return null;
+
+    }
 }
