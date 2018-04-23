@@ -144,12 +144,12 @@ public class Controller {
 
         String[] values = getValuesForInsert(words);
 
-        if ()
+        if (validateValuesForInsert(values))
 
         activeEnviornment.insertIntoDB(words[2], Arrays.copyOfRange(words, 4, words.length));
     }
 
-    public boolean validateValuesForInsert()
+    public boolean validateValuesForInsert(String[] values)
     {
         return true;
     }
