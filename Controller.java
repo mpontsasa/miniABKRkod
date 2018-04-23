@@ -89,7 +89,7 @@ public class Controller {
         }
     }
 
-    private ArrayList<ColumnStructure> parseCreateTablecommand(String[] words){
+    private ArrayList<ColumnStructure> parseCreateTableCommand(String[] words) throws InvalidSQLCommandException{
 
         ArrayList<ColumnStructure> result = new ArrayList<>();
 
@@ -107,6 +107,9 @@ public class Controller {
             List<String> fcpList = Arrays.asList(fieldCommandParts);
             String name = fieldCommandParts[0];
             String type = fieldCommandParts[1];
+            if((!type.equals(Finals.INT_TYPE)) && (!type.equals(Finals.STRING_TYPE))){
+                throw new InvalidSQLCommandException("Wrong type!");
+            }
             boolean primary = fcpList.contains("primary");
             boolean foreign = fcpList.contains("references");
             boolean unique = fcpList.contains("unique");
@@ -133,9 +136,9 @@ public class Controller {
         }
 
         activeEnviornment.createDB(words[2]);
-        parseCreateTablecommand(words);
+
         /// MEG KELL: szerkezet letrehozasa
-        TableStructure tableStructure = new TableStructure(words[2],parseCreateTablecommand(words));
+        TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
     }
 
@@ -189,7 +192,7 @@ public class Controller {
 
         if (validateValuesForInsert(words[2],  values))
         {
-            DatabaseEntry theKey = ;
+            //DatabaseEntry theKey = ;
             DatabaseEntry theData = null;
         }
         else
@@ -197,11 +200,63 @@ public class Controller {
             throw new InvalidSQLCommandException("Incorrect values given.");
         }
 
+
         activeEnviornment.insertIntoDB(words[2], Arrays.copyOfRange(words, 4, words.length));
     }
 
+
+    public boolean checkPrimaryKeyConstraintOnInsert(){
+        return true;
+    }
+
+    public boolean checkUniqueConstraintOnInsert(){
+        return true;
+    }
+
+    public boolean checkForeignKeyConstraintOnInsert(){
+        return true;
+    }
+
+
     public boolean validateValuesForInsert(String tableName, String[] values)
     {
+        ArrayList<ColumnStructure> columnStructures = sqlDatabaseStructure.findTable(tableName).getColumns();
+        if(values.length != columnStructures.size()){
+            return false;
+        }
+
+        ColumnStructure columnIterator = null;
+        for(int i = 0; i < values.length; i++){
+
+            columnIterator = columnStructures.get(i);
+            if(columnIterator.getType().equals(Finals.INT_TYPE)) {
+                try{
+                    int dummy = Integer.parseInt(values[i]);
+                }
+                catch (NumberFormatException e){
+                    return false;
+                }
+            }
+
+            if(columnIterator.isPrimaryKey()){
+                if(!checkPrimaryKeyConstraintOnInsert()){
+                    return false;
+                }
+            }
+
+            if(columnIterator.isForeignKey()){
+                if(!checkForeignKeyConstraintOnInsert()){
+                    return false;
+                }
+            }
+
+            if(columnIterator.isUnique()){
+                if(!checkUniqueConstraintOnInsert()){
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

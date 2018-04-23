@@ -17,6 +17,8 @@ public class Main {
 
             controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
 
+            //int a = Integer.parseInt("szia");
+
             //System.out.println("Elso command vege");
             //controller.parseSQL("Create Table Table1");
             //controller.parseSQL("Create Table Table2");

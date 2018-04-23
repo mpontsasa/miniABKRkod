@@ -9,6 +9,7 @@ public class ColumnStructure {
     private String type;//from Finals
     private boolean hasIndex;
 
+
     //EZEKET UGY GONDOLTAM JO OTLET MEGIRNI DE CSAK AZ UTOLSOT SZERETNEM HASZNALNI VEHHULIS
 //    public ColumnStructure(String name, String type) {
 //        this.name = name;
@@ -119,6 +120,10 @@ public class ColumnStructure {
 
     public boolean isForeignKey() {
         return isForeignKey;
+    }
+
+    public boolean isUnique() {
+        return isUnique;
     }
 
     public String getForeignReferenceName() {
