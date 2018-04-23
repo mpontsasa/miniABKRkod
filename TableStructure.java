@@ -7,38 +7,53 @@ public class TableStructure {
 
     private String name;
     private ArrayList<ColumnStructure> columns;
-    private ColumnStructure key;
+    private int columnIndex;
 
     public TableStructure(String name, ArrayList<ColumnStructure> columns) throws MultiplePrimaryKeysInTableException {
         this.name = name;
-        this.columns = new ArrayList<>(columns);//because we are going to remove the key column from this.columns, but dont want to hurt the parameter list
+        this.columns = columns;//because we are going to remove the key column from this.columns, but dont want to hurt the parameter list
 
-        for (ColumnStructure c :
-                columns) {
-            if (c.isPrimaryKey())
-            {
-                if(key == null){
-                    key = c;
-
+        //validate multiple primary keys and set column index
+        boolean hasPrimary = false;
+        for(int i = 0; i < columns.size(); i++){
+            if(columns.get(i).isPrimaryKey()){
+                if(hasPrimary){
+                    throw new MultiplePrimaryKeysInTableException();
                 }
                 else{
-                    throw new MultiplePrimaryKeysInTableException();
+                    hasPrimary = true;
+                    columnIndex = i;
                 }
             }
         }
-        this.columns.remove(key);
+
+
+
     }
 
-    public void removeColumn(ColumnStructure c){
+    public void removeColumn(ColumnStructure c) throws Exception{
+        if(c.isPrimaryKey()){
+            throw new Exception("cannot remove a primary key!");
+        }
         columns.remove(c);
+        for(int i = 0; i < columns.size(); i++){
+            if(columns.get(i).isPrimaryKey()){
+                columnIndex = i;
+            }
+        }
     }
 
-    public  void addColumn(ColumnStructure c) throws MultiplePrimaryKeysInTableException{
+    public void addColumn(ColumnStructure c) throws MultiplePrimaryKeysInTableException{
         if(c.isPrimaryKey()){
             throw new MultiplePrimaryKeysInTableException();
         }
         else{
             columns.add(c);
+            for(int i = 0; i < columns.size(); i++){
+                if(columns.get(i).isPrimaryKey()){
+                    columnIndex = i;
+                }
+            }
         }
     }
 
@@ -47,8 +62,7 @@ public class TableStructure {
         StringBuilder result = new StringBuilder();
         result.append(name);
         result.append("\n");
-        result.append(key);
-        result.append("\n");
+
         for(ColumnStructure c: columns){
             result.append(c);
             result.append("\n");
@@ -62,7 +76,7 @@ public class TableStructure {
         res.put(Finals.JSON_TABLE_NAME_KEY, name);
         JSONArray JSONColumns = new JSONArray();
 
-        JSONColumns.put(key.toJson());//firstly add the key
+
         for(ColumnStructure c:columns){
             JSONColumns.put(c.toJson());//add all other columns to a vector
         }
@@ -88,7 +102,5 @@ public class TableStructure {
         return columns;
     }
 
-    public ColumnStructure getKey() {
-        return key;
-    }
+
 }
