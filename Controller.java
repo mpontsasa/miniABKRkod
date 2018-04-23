@@ -192,7 +192,8 @@ public class Controller {
 
         if (validateValuesForInsert(words[2],  values))
         {
-            //DatabaseEntry theKey = ;
+            Table temp = new Table(sqlDatabaseStructure.findTable(words[2]), values);
+            DatabaseEntry theKey = new DatabaseEntry();
             DatabaseEntry theData = null;
         }
         else
