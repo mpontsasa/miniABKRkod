@@ -1,6 +1,6 @@
 public class Finals {
-    public static final String INT_TYPE = "INT";
-    public static final String STRING_TYPE = "STRING";
+    public static final String INT_TYPE = "int";
+    public static final String STRING_TYPE = "string";
 
 
     public static final String IS_PRIMARY_TO_STRING = "IS_PRIMARY";
@@ -12,6 +12,7 @@ public class Finals {
     public static final String JSON_COLUMN_TYPE_KEY = "Column type";
     public static final String JSON_COLUMN_ISPRIMARY_KEY = "Is primary?";
     public static final String JSON_COLUMN_ISFOREIGN_KEY = "Is foreign?";
+    public static final String JSON_COLUMN_ISUNIQUE = "Is unique?";
     public static final String JSON_COLUMN_REFERENCE_KEY = "Foreign reference";
 
     public static final String JSON_TABLE_NAME_KEY = "Table name";

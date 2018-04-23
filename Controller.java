@@ -4,7 +4,9 @@ import java.io.File;
 import java.lang.module.InvalidModuleDescriptorException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Controller {
 
@@ -88,6 +90,42 @@ public class Controller {
         }
     }
 
+    private ArrayList<ColumnStructure> parseCreateTablecommand(String[] words){
+
+        ArrayList<ColumnStructure> result = new ArrayList<>();
+
+        String command = String.join(" ", words);
+        command = command.substring(command.indexOf("(") + 1 , command.indexOf(")"));
+        //System.out.println("got the command:" + command);
+        command = command.trim().replaceAll(" +"," ");
+        command = command.replaceAll("^ +", "");
+        command = command.replaceAll(" +$", "");
+        command = command.replaceAll(" +, +", ",");
+        String[] fieldsCommands = command.split(",");
+
+        for(String fieldCommand : fieldsCommands){
+            String[] fieldCommandParts = fieldCommand.split(" ");
+            List<String> fcpList = Arrays.asList(fieldCommandParts);
+            String name = fieldCommandParts[0];
+            String type = fieldCommandParts[1];
+            boolean primary = fcpList.contains("primary");
+            boolean foreign = fcpList.contains("references");
+            boolean unique = fcpList.contains("unique");
+            String reference = null;
+            if(foreign)
+            {
+                reference = fcpList.get(fcpList.indexOf("references") + 1);
+            }
+
+            result.add(new ColumnStructure(name, type, primary, foreign, unique, reference));
+        }
+        //System.out.println(command);
+
+
+        return result;
+
+    }
+
     public void createTableCommand(String[] words)throws Exception{
 
         if (!activeEnviornment.isSetUp())
@@ -96,8 +134,10 @@ public class Controller {
         }
 
         activeEnviornment.createDB(words[2]);
+        parseCreateTablecommand(words);
         /// MEG KELL: szerkezet letrehozasa
-        //TableStructure tableStructure = new TableStructure()
+        TableStructure tableStructure = new TableStructure(words[2],parseCreateTablecommand(words));
+        sqlDatabaseStructure.addTable(tableStructure);
     }
 
     public void dropDatabaseCommand(String[] words)throws Exception{
@@ -113,6 +153,11 @@ public class Controller {
         activeEnviornment = null;
 
         ///MEG KELL: szerkezet torlese
+        if(!deleteDirectory(new File(words[2] + ".json")))
+        {
+            throw new InvalidSQLCommandException("Cant delete Database structure!");
+        }
+        sqlDatabaseStructure = null;
     }
 
     public void dropTableCommand(String[] words)throws Exception{
@@ -126,6 +171,7 @@ public class Controller {
         }
 
         activeEnviornment.deleteDB(words[2]);
+        sqlDatabaseStructure.deleteTable(words[2]);
     }
 
     public void insertIntoCommand(String[] words)throws Exception{
@@ -152,6 +198,7 @@ public class Controller {
     {
 
     }
+
 
     public static boolean deleteDirectory(File directory) {
         if(directory.exists()){

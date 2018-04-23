@@ -3,9 +3,11 @@ import org.json.JSONObject;
 public class ColumnStructure {
     private boolean isPrimaryKey;
     private boolean isForeignKey;
+    private boolean isUnique;
     private String foreignReferenceName;
     private String name;
     private String type;//from Finals
+    private boolean hasIndex;
 
     //EZEKET UGY GONDOLTAM JO OTLET MEGIRNI DE CSAK AZ UTOLSOT SZERETNEM HASZNALNI VEHHULIS
 //    public ColumnStructure(String name, String type) {
@@ -26,9 +28,10 @@ public class ColumnStructure {
 //        this.type = type;
 //    }
 
-    public ColumnStructure(String name, String type,boolean isPrimaryKey, boolean isForeignKey, String foreignReferenceName) {
+    public ColumnStructure(String name, String type,boolean isPrimaryKey, boolean isForeignKey,boolean isUnique, String foreignReferenceName) {
         this.isPrimaryKey = isPrimaryKey;
         this.isForeignKey = isForeignKey;
+        this.isUnique = isUnique;
         if((foreignReferenceName == null) || (foreignReferenceName.equals(""))){
             this.foreignReferenceName = "";
         }
@@ -37,6 +40,7 @@ public class ColumnStructure {
         }
         this.name = name;
         this.type = type;
+        hasIndex = false;
     }
 
     @Override
@@ -67,6 +71,9 @@ public class ColumnStructure {
 
             result = result + Finals.COLUMN_TO_STRING_SEPARATOR + foreign + Finals.COLUMN_TO_STRING_SEPARATOR + reference;
 
+        }
+        if(isUnique){
+            result = result + Finals.COLUMN_TO_STRING_SEPARATOR + Finals.IS_UNIQUE_TO_STRING;
         }
 
 
@@ -99,6 +106,7 @@ public class ColumnStructure {
         columnJSON.put(Finals.JSON_COLUMN_TYPE_KEY, type);
         columnJSON.put(Finals.JSON_COLUMN_ISPRIMARY_KEY,isPrimaryKey);
         columnJSON.put(Finals.JSON_COLUMN_ISFOREIGN_KEY, isForeignKey);
+        columnJSON.put(Finals.JSON_COLUMN_ISUNIQUE, isUnique);
         columnJSON.put(Finals.JSON_COLUMN_REFERENCE_KEY, foreignReferenceName);
 
 
@@ -123,5 +131,13 @@ public class ColumnStructure {
 
     public String getType() {
         return type;
+    }
+
+    public boolean isHasIndex() {
+        return hasIndex;
+    }
+
+    public void setHasIndex(boolean hasIndex) {
+        this.hasIndex = hasIndex;
     }
 }

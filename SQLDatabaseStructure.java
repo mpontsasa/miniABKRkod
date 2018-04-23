@@ -22,6 +22,15 @@ public class SQLDatabaseStructure {
         tables.add(t);
     }
 
+    public void deleteTable(String tableName){
+
+        for(TableStructure ts : tables){
+            if(tableName.equals(ts.getName())){
+                tables.remove(ts);
+            }
+        }
+    }
+
     public void deleteTable(TableStructure t){
         tables.remove(t);
     }

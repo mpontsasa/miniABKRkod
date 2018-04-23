@@ -78,4 +78,17 @@ public class TableStructure {
             System.out.println(jsonObject);
         }
     }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public ArrayList<ColumnStructure> getColumns() {
+        return columns;
+    }
+
+    public ColumnStructure getKey() {
+        return key;
+    }
 }
