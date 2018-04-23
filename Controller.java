@@ -185,17 +185,22 @@ public class Controller {
             throw new InvalidSQLCommandException("Unknown command format.");
         }
 
-        DatabaseEntry theKey = null;
-        DatabaseEntry theData = null;
-
         String[] values = getValuesForInsert(words);
 
-        if (validateValuesForInsert(values))
+        if (validateValuesForInsert(words[2],  values))
+        {
+            DatabaseEntry theKey = ;
+            DatabaseEntry theData = null;
+        }
+        else
+        {
+            throw new InvalidSQLCommandException("Incorrect values given.");
+        }
 
         activeEnviornment.insertIntoDB(words[2], Arrays.copyOfRange(words, 4, words.length));
     }
 
-    public boolean validateValuesForInsert(String[] values)
+    public boolean validateValuesForInsert(String tableName, String[] values)
     {
         return true;
     }
