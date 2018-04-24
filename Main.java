@@ -6,8 +6,6 @@ import java.util.Collections;
 
 public class Main {
 
-
-
     public static void main(String[] args){
 
         Controller controller = new Controller();
@@ -18,7 +16,7 @@ public class Main {
             controller.parseSQL("use szia");
             controller.parseSQL("create table Tabla1 (egy int primary, ketto int, harom string)");
 
-            controller.getActiveEnviornment().printTables();
+            //controller.getActiveEnviornment().printTables();
 
             controller.parseSQL("insert into Tabla1 values (1,2, \"hrm\")");
             //controller.parseSQL("use szia");

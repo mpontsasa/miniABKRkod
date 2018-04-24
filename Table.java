@@ -41,18 +41,20 @@ public class Table {
 
     public byte[] getValueBytes(int recordIndex)
     {
-        byte[] res = new byte[0];
+        String res = "";
 
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
-            if (structure.getTypeByIndex(i) == Finals.INT_TYPE) {
+            /*if (structure.getTypeByIndex(i) == Finals.INT_TYPE) {
                 res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
             } else if (structure.getTypeByIndex(i) == Finals.STRING_TYPE) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
-            }
+            }*/
+
+            res += data.get(recordIndex)[i] +;
         }
 
-        return res;
+        return toBytes(res);
     }
 
     public String[] getRowByKey(String key){
