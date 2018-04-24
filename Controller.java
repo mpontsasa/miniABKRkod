@@ -96,10 +96,10 @@ public class Controller {
         String command = String.join(" ", words);
         command = command.substring(command.indexOf("(") + 1 , command.indexOf(")"));
         //System.out.println("got the command:" + command);
-        command = command.trim().replaceAll(" +"," ");
-        command = command.replaceAll("^ +", "");
+        command = command.trim().replaceAll(" +"," ");//remove extra spaces
+        command = command.replaceAll("^ +", "");//more space removel at end and beggining of string, probably not necessary
         command = command.replaceAll(" +$", "");
-        command = command.replaceAll(", +", ",");
+        command = command.replaceAll(", +", ",");//remove spaces ner commas
         command = command.replaceAll(" +,", ",");
         String[] fieldsCommands = command.split(",");
 
@@ -137,7 +137,7 @@ public class Controller {
         }
 
         activeEnviornment.createDB(words[2]);
-        
+
         TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
     }
@@ -200,6 +200,8 @@ public class Controller {
             DatabaseEntry theKey = new DatabaseEntry(tempTable.getKeyBytes(0));
             DatabaseEntry theData = new DatabaseEntry(tempTable.getValueBytes(0));
 
+            tempTable.addRecord(theKey, theData);
+
             activeEnviornment.insertIntoDB(words[2], theKey, theData);
         }
         else
@@ -208,14 +210,17 @@ public class Controller {
         }
     }
 
+    //MEG KELL IRNI
     public boolean checkPrimaryKeyConstraintOnInsert(){
         return true;
     }
 
+    //MEG KELL IRNI
     public boolean checkUniqueConstraintOnInsert(){
         return true;
     }
 
+    //MEG KELL IRNI
     public boolean checkForeignKeyConstraintOnInsert(){
         return true;
     }

@@ -1,3 +1,5 @@
+import java.net.PortUnreachableException;
+
 public class Finals {
     public static final String INT_TYPE = "int";
     public static final String STRING_TYPE = "string";
@@ -22,6 +24,8 @@ public class Finals {
     public static final String JSON_DATABASE_TABLES_KEY = "Tables";
 
     public final static String ENVIORNMENT_PATH = "Enviornments/";
+
+    public final static String DATA_DELIMITER = "|";
 
 
 }
