@@ -64,6 +64,8 @@ public class Table {
     {
         String res = "";
 
+        int keyInd = structure.getKeyIndex();
+
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
             /*if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
@@ -72,8 +74,8 @@ public class Table {
             } else if (structure.getTypeByIndex(i).equals(Finals.STRING_TYPE)) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
             }*/
-
-            res += data.get(recordIndex)[i] + Finals.DATA_DELIMITER;
+            if (i != keyInd)
+                res += data.get(recordIndex)[i] + Finals.DATA_DELIMITER;
         }
 
         return toBytes(res);
