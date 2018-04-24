@@ -27,8 +27,6 @@ public class TableStructure {
             }
         }
 
-
-
     }
 
     public void removeColumn(ColumnStructure c) throws Exception{
@@ -93,7 +91,6 @@ public class TableStructure {
         }
     }
 
-
     public String getName() {
         return name;
     }
@@ -101,7 +98,6 @@ public class TableStructure {
     public ArrayList<ColumnStructure> getColumns() {
         return columns;
     }
-
 
     public int getKeyIndex(){
         return keyIndex;

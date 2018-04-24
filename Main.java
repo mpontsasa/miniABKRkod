@@ -16,10 +16,15 @@ public class Main {
 
             //controller.parseSQL("create database szia");
             controller.parseSQL("use szia");
+            controller.parseSQL("create table Tabla1 (egy int, ketto int, harom string)");
+            controller.parseSQL("insert into Tabla1 values (1,2, \"hrm\")");
+            controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
 
 
-            controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
+            //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
+
+
 
             //int a = Integer.parseInt("szia");
 

@@ -1,3 +1,4 @@
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class Table {
@@ -21,14 +22,40 @@ public class Table {
         data.add(onlyRecord);
     }
 
-    public String getKeyValue(int rowIndex){
+    public String getKey(int recordIndex){
 
         int keyIndex = structure.getKeyIndex();
 
-        return data.get(rowIndex)[keyIndex];
+        return data.get(recordIndex)[keyIndex];
     }
 
-    public String[] getRowByKeyValue(String key){
+    public byte[] getKeyBytes(int recordIndex) {
+        if (structure.getKeyType() == Finals.INT_TYPE) {
+            return toBytes(Integer.parseInt(getKey(recordIndex)));
+        } else if (structure.getKeyType() == Finals.STRING_TYPE) {
+            return toBytes(getKey(recordIndex));
+        } else {
+            return toBytes(Integer.parseInt(getKey(recordIndex))); // ha mas tipusu, visszaterit majd mast, most stringkent kezeli
+        }
+    }
+
+    public byte[] getValueBytes(int recordIndex)
+    {
+        byte[] res = new byte[0];
+
+        for(int i = 0; i <data.get(recordIndex).length; i++)
+        {
+            if (structure.getTypeByIndex(i) == Finals.INT_TYPE) {
+                res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
+            } else if (structure.getTypeByIndex(i) == Finals.STRING_TYPE) {
+                res = concat(res, toBytes(data.get(recordIndex)[i]));
+            }
+        }
+
+        return res;
+    }
+
+    public String[] getRowByKey(String key){
 
         int keyIndex = structure.getKeyIndex();
         for(String[] row : data){
@@ -38,5 +65,38 @@ public class Table {
             }
         }
         return null;
+    }
+
+    byte[] toBytes(int i)
+    {
+        byte[] result = new byte[4];
+
+        result[0] = (byte) (i >> 24);
+        result[1] = (byte) (i >> 16);
+        result[2] = (byte) (i >> 8);
+        result[3] = (byte) (i /*>> 0*/);
+
+        return result;
+    }
+
+    byte[] toBytes(String str)
+    {
+        return str.getBytes();
+    }
+
+    byte[] concat (byte a[], byte b[])
+    {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+        try{
+
+            outputStream.write( a );
+            outputStream.write( b );
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return outputStream.toByteArray( );
     }
 }
