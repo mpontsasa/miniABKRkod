@@ -55,7 +55,20 @@ public class SQLDatabaseStructure {
 
     @Override
     public String toString(){
-        return name + "Ez egy adatbazis!";
+
+
+        StringBuilder result = new StringBuilder();
+        result.append("Adatbazis:").append(name).append("\n");
+
+
+        for(TableStructure ts: tables){
+            result.append(ts.toString());
+            result.append("\n");
+        }
+
+        return result.toString();
+
+
     }
 
     public String getName() {

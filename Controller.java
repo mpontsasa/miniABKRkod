@@ -138,7 +138,7 @@ public class Controller {
 
         activeEnviornment.createDB(words[2]);
 
-        /// MEG KELL: szerkezet letrehozasa
+        
         TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
     }
