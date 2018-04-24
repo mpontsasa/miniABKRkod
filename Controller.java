@@ -131,6 +131,10 @@ public class Controller {
 
     public void createTableCommand(String[] words)throws Exception{
 
+        if(sqlDatabaseStructure.hasTable(words[2])){
+            throw new InvalidSQLCommandException("Table already exists!(Create table error)");
+        }
+
         if (!activeEnviornment.isSetUp())
         {
             throw new InvalidSQLCommandException("No database selected");
@@ -140,6 +144,7 @@ public class Controller {
 
         TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
+        sqlDatabaseStructure.toJson();
     }
 
     public void dropDatabaseCommand(String[] words)throws Exception{
@@ -177,6 +182,7 @@ public class Controller {
 
         activeEnviornment.deleteDB(words[2]);
         sqlDatabaseStructure.deleteTable(words[2]);
+        sqlDatabaseStructure.toJson();
     }
 
     public void insertIntoCommand(String[] words)throws Exception{
@@ -200,7 +206,7 @@ public class Controller {
             DatabaseEntry theKey = new DatabaseEntry(tempTable.getKeyBytes(0));
             DatabaseEntry theData = new DatabaseEntry(tempTable.getValueBytes(0));
 
-            tempTable.addRecord(theKey, theData);
+            tempTable.addRecord(theKey, theData);//matyi tesztel
 
             activeEnviornment.insertIntoDB(words[2], theKey, theData);
         }

@@ -42,11 +42,8 @@ public class TableStructure {
             throw new Exception("cannot remove a primary key!");
         }
         columns.remove(c);
-        for(int i = 0; i < columns.size(); i++){
-            if(columns.get(i).isPrimaryKey()){
-                keyIndex = i;
-            }
-        }
+        refreshKeyIndex();
+
     }
 
     public void addColumn(ColumnStructure c) throws MultiplePrimaryKeysInTableException{
@@ -55,11 +52,7 @@ public class TableStructure {
         }
         else{
             columns.add(c);
-            for(int i = 0; i < columns.size(); i++){
-                if(columns.get(i).isPrimaryKey()){
-                    keyIndex = i;
-                }
-            }
+            refreshKeyIndex();
         }
     }
 
@@ -96,6 +89,15 @@ public class TableStructure {
         for(int i = 1; i < a.length(); i++){
             jsonObject = a.getJSONObject(i);
             System.out.println(jsonObject);
+        }
+    }
+
+    private void refreshKeyIndex(){
+        for(int i = 0; i < columns.size(); i++){
+            if(columns.get(i).isPrimaryKey()){
+                keyIndex = i;
+                break;
+            }
         }
     }
 

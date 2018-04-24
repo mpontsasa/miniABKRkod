@@ -27,9 +27,9 @@ public class Table {
 
     public String getKey(int recordIndex){
 
-        int keyIndex = structure.getKeyIndex();
+        //int keyIndex = structure.getKeyIndex();
 
-        return data.get(recordIndex)[keyIndex];
+        return data.get(recordIndex)[structure.getKeyIndex()];
     }
 
 

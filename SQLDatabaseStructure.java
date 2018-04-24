@@ -80,6 +80,15 @@ public class SQLDatabaseStructure {
     }
 
 
+    public boolean hasTable(String tableName){
+        for(TableStructure ts : tables){
+            if(tableName.equals(ts.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public TableStructure findTable(String tableName){
 
         for(TableStructure ts : tables){
