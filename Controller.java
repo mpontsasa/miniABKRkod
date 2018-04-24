@@ -99,7 +99,8 @@ public class Controller {
         command = command.trim().replaceAll(" +"," ");
         command = command.replaceAll("^ +", "");
         command = command.replaceAll(" +$", "");
-        command = command.replaceAll(" +, +", ",");
+        command = command.replaceAll(", +", ",");
+        command = command.replaceAll(" +,", ",");
         String[] fieldsCommands = command.split(",");
 
         for(String fieldCommand : fieldsCommands){

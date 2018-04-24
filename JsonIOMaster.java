@@ -84,7 +84,7 @@ public class JsonIOMaster {
 
             try {
                 SQLDatabaseStructure.addTable(new TableStructure(tableName,columnStructureArrayList));
-            } catch (MultiplePrimaryKeysInTableException e) {
+            } catch (Exception e){
                 e.printStackTrace();
             }
         }

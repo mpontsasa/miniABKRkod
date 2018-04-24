@@ -9,9 +9,13 @@ public class TableStructure {
     private ArrayList<ColumnStructure> columns;
     private int keyIndex;
 
-    public TableStructure(String name, ArrayList<ColumnStructure> columns) throws MultiplePrimaryKeysInTableException {
+    public TableStructure(String name, ArrayList<ColumnStructure> columns) throws MultiplePrimaryKeysInTableException,
+            Exception {
         this.name = name;
         this.columns = columns;//because we are going to remove the key column from this.columns, but dont want to hurt the parameter list
+
+
+
 
         //validate multiple primary keys and set column index
         boolean hasPrimary = false;
@@ -25,6 +29,10 @@ public class TableStructure {
                     keyIndex = i;
                 }
             }
+        }
+
+        if (!hasPrimary) {
+            throw new Exception("No primary key in table!");
         }
 
     }
