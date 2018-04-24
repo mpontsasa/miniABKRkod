@@ -66,7 +66,7 @@ public class ActiveEnviornment {
         dbConfig.setAllowCreate(false);
         myDatabase = enviornment.openDatabase(null, tableName, dbConfig);
 
-
+        myDatabase.put(null, key, value);
 
         myDatabase.close();
         enviornment.close();
@@ -81,5 +81,39 @@ public class ActiveEnviornment {
             System.out.println("DBs: " + dbn);
         }
         enviornment.close();
+    }
+
+    public void getValueByKey(String tableName, String aKey)
+    {
+        openEnviornment();
+
+        Database myDatabase = null;
+        DatabaseConfig dbConfig = new DatabaseConfig();
+        dbConfig.setAllowCreate(false);
+        myDatabase = enviornment.openDatabase(null, tableName, dbConfig);
+
+        try {
+// Create a pair of DatabaseEntry objects. theKey
+// is used to perform the search. theData is used
+// to store the data returned by the get() operation.
+            DatabaseEntry theKey = new DatabaseEntry(aKey.getBytes("UTF-8"));
+            DatabaseEntry theData = new DatabaseEntry();
+// Perform the get.
+            if (myDatabase.get(null, theKey, theData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+// Recreate the data String.
+                byte[] retData = theData.getData();
+                String foundData = new String(retData, "UTF-8");
+                System.out.println("For key: '" + aKey + "' found data: '" +
+                        foundData + "'.");
+            } else {
+                System.out.println("No record found for key '" + aKey + "'.");
+            }
+        } catch (Exception e) {
+// Exception handling goes here
+            e.printStackTrace();
+        }
+        myDatabase.close();
+        enviornment.close();
+
     }
 }
