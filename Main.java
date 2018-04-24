@@ -5,11 +5,15 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class Main {
+
+
+
     public static void main(String[] args){
 
         Controller controller = new Controller();
         try
         {
+
             //controller.parseSQL("create database szia");
             controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
@@ -24,6 +28,8 @@ public class Main {
             //controller.parseSQL("Create Table Table2");
             //controller.parseSQL("insert into Table1 values (alma, \"alma\"    ,   5    )");
             //controller.parseSQL("create database szia");
+
+
 
         }
         catch (InvalidSQLCommandException isqlce)
