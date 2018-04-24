@@ -71,4 +71,15 @@ public class ActiveEnviornment {
         myDatabase.close();
         enviornment.close();
     }
+
+    public void printTables()
+    {
+        openEnviornment();
+        for (String dbn : enviornment.getDatabaseNames())
+        {
+
+            System.out.println("DBs: " + dbn);
+        }
+        enviornment.close();
+    }
 }

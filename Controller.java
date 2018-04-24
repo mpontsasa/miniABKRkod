@@ -81,8 +81,8 @@ public class Controller {
         try{
             activeEnviornment.setUpActiveEnviornment(words[2],true);
 
-            SQLDatabaseStructure databaseStructure = new SQLDatabaseStructure(words[2]);
-            databaseStructure.toJson();
+            sqlDatabaseStructure = new SQLDatabaseStructure(words[2]);
+            sqlDatabaseStructure.toJson();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -137,7 +137,6 @@ public class Controller {
         }
 
         activeEnviornment.createDB(words[2]);
-
         
         TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
@@ -164,6 +163,9 @@ public class Controller {
     }
 
     public void dropTableCommand(String[] words)throws Exception{
+
+        System.out.println("Drop Table " + words[2]);
+
         if (words.length != 3){
             throw new InvalidSQLCommandException("Insuficient length.");
         }
@@ -220,6 +222,10 @@ public class Controller {
 
     public boolean validateValuesForInsert(String tableName, String[] values)
     {
+
+        System.out.println(sqlDatabaseStructure);
+        System.out.println(sqlDatabaseStructure.findTable(tableName));
+        System.out.println(tableName);
         ArrayList<ColumnStructure> columnStructures = sqlDatabaseStructure.findTable(tableName).getColumns();
         if(values.length != columnStructures.size()){
             return false;
@@ -299,5 +305,9 @@ public class Controller {
 
     public SQLDatabaseStructure getSqlDatabaseStructure() {
         return sqlDatabaseStructure;
+    }
+
+    public ActiveEnviornment getActiveEnviornment() {
+        return activeEnviornment;
     }
 }
