@@ -25,7 +25,7 @@ public class Finals {
 
     public final static String ENVIORNMENT_PATH = "Enviornments/";
 
-    public final static String DATA_DELIMITER = "|";
+    public final static String DATA_DELIMITER = "`";
 
 
 }

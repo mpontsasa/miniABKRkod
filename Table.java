@@ -44,7 +44,16 @@ public class Table {
 
         String[] data  = dataString.split(Finals.DATA_DELIMITER);
 
+        String[] result = new String[data.length + 1];
 
+        int i = 0;
+        for ( i = 0; i < keyIndex; i++){
+            result[i] = data[i];
+        }
+        result[i] = keyString;i++;
+        System.arraycopy(data, i - 1, result, i, result.length - i);
+
+        this.data.add(result);
     }
 
     public byte[] getKeyBytes(int recordIndex) {
