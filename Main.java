@@ -14,8 +14,8 @@ public class Main {
         try
         {
 
-            controller.parseSQL("create database szia");
-            //controller.parseSQL("use szia");
+            //controller.parseSQL("create database szia");
+            controller.parseSQL("use szia");
             controller.parseSQL("create table Tabla1 (egy int primary, ketto int, harom string)");
 
             controller.getActiveEnviornment().printTables();

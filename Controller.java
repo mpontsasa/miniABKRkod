@@ -81,8 +81,8 @@ public class Controller {
         try{
             activeEnviornment.setUpActiveEnviornment(words[2],true);
 
-            SQLDatabaseStructure databaseStructure = new SQLDatabaseStructure(words[2]);
-            databaseStructure.toJson();
+            sqlDatabaseStructure = new SQLDatabaseStructure(words[2]);
+            sqlDatabaseStructure.toJson();
 
         }catch (Exception e){
             e.printStackTrace();
