@@ -59,7 +59,7 @@ public class Table {
     public byte[] getKeyBytes(int recordIndex) {
 
         /*if (structure.getKeyType().equals( Finals.INT_TYPE ) ) {
->>>>>>> 7706a9b575b3c22c216c3a5bf6e6a8251a8d1c57
+
             return toBytes(Integer.parseInt(getKey(recordIndex)));
         } else if (structure.getKeyType().equalsIgnoreCase(Finals.STRING_TYPE) ) {
             return toBytes(getKey(recordIndex));
