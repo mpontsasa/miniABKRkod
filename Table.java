@@ -51,10 +51,9 @@ public class Table {
             result[i] = data[i];
         }
         result[i] = keyString;i++;
-        for(int j = i; j < result.length; j++){
-            result[j] = data[j];
-        }
+        System.arraycopy(data, i - 1, result, i, result.length - i);
 
+        this.data.add(result);
     }
 
     public byte[] getKeyBytes(int recordIndex) {

@@ -14,11 +14,11 @@ public class Main {
 
             //controller.parseSQL("create database szia");
             controller.parseSQL("use szia");
-            controller.parseSQL("create table Tabla1 (egy int primary, ketto int, harom string)");
+            controller.parseSQL("create table Tabla1 (nev string , kor int, id int primary, kedvencCsapat string, kedvencSzam int)");
 
             //controller.getActiveEnviornment().printTables();
 
-            controller.parseSQL("insert into Tabla1 values (1,2, \"haromnak az erteke\")");
+            controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas\",20, 77, \"ghetto masters\", 8547)");
             //controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
 
