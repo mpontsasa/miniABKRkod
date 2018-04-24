@@ -192,19 +192,18 @@ public class Controller {
 
         if (validateValuesForInsert(words[2],  values))
         {
-            Table temp = new Table(sqlDatabaseStructure.findTable(words[2]), values);
-            DatabaseEntry theKey = new DatabaseEntry();
-            DatabaseEntry theData = null;
+            Table tempTable = new Table(sqlDatabaseStructure.findTable(words[2]), values);
+
+            DatabaseEntry theKey = new DatabaseEntry(tempTable.getKeyBytes(0));
+            DatabaseEntry theData = new DatabaseEntry(tempTable.getValueBytes(0));
+
+            activeEnviornment.insertIntoDB(words[2], theKey, theData);
         }
         else
         {
             throw new InvalidSQLCommandException("Incorrect values given.");
         }
-
-
-        activeEnviornment.insertIntoDB(words[2], Arrays.copyOfRange(words, 4, words.length));
     }
-
 
     public boolean checkPrimaryKeyConstraintOnInsert(){
         return true;
@@ -217,7 +216,6 @@ public class Controller {
     public boolean checkForeignKeyConstraintOnInsert(){
         return true;
     }
-
 
     public boolean validateValuesForInsert(String tableName, String[] values)
     {
@@ -280,7 +278,6 @@ public class Controller {
 
         return values;
     }
-
 
     public static boolean deleteDirectory(File directory) {
         if(directory.exists()){
