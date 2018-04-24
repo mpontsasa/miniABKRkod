@@ -1,4 +1,4 @@
-//import com.sleepycat.je.Environment;
+import com.sleepycat.je.Environment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +20,13 @@ public class Main {
 
             controller.getActiveEnviornment().printTables();
 
-            controller.parseSQL("insert into Tabla1 values (1,2, \"hrm\")");
+            controller.parseSQL("insert into Tabla1 values (1,2, \"haromnak az erteke\")");
             //controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
 
 
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
+
 
 
 

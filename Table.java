@@ -1,4 +1,7 @@
+import com.sleepycat.je.DatabaseEntry;
+
 import java.io.ByteArrayOutputStream;
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 public class Table {
@@ -29,10 +32,25 @@ public class Table {
         return data.get(recordIndex)[keyIndex];
     }
 
+
+    public void addRecord(DatabaseEntry keyEntry, DatabaseEntry dataEntry){
+
+        String keyString = new String(keyEntry.getData());
+        String dataString = new String(dataEntry.getData());
+
+        System.out.println("key:" + keyString + "\ndata:" + dataString);
+
+        int keyIndex = structure.getKeyIndex();
+
+        String[] data  = dataString.split(Finals.DATA_DELIMITER);
+        
+
+    }
+
     public byte[] getKeyBytes(int recordIndex) {
-        if (structure.getKeyType() == Finals.INT_TYPE) {
+        if (structure.getKeyType().equals( Finals.INT_TYPE ) ) {
             return toBytes(Integer.parseInt(getKey(recordIndex)));
-        } else if (structure.getKeyType() == Finals.STRING_TYPE) {
+        } else if (structure.getKeyType().equals(Finals.STRING_TYPE) ) {
             return toBytes(getKey(recordIndex));
         } else {
             return toBytes(Integer.parseInt(getKey(recordIndex))); // ha mas tipusu, visszaterit majd mast, most stringkent kezeli
@@ -45,9 +63,9 @@ public class Table {
 
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
-            if (structure.getTypeByIndex(i) == Finals.INT_TYPE) {
+            if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
                 res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
-            } else if (structure.getTypeByIndex(i) == Finals.STRING_TYPE) {
+            } else if (structure.getTypeByIndex(i).equals(Finals.STRING_TYPE)) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
             }
         }
