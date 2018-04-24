@@ -48,13 +48,16 @@ public class Table {
     }
 
     public byte[] getKeyBytes(int recordIndex) {
-        if (structure.getKeyType().equals( Finals.INT_TYPE ) ) {
+        /*if (structure.getKeyType().equals( Finals.INT_TYPE ) ) {
             return toBytes(Integer.parseInt(getKey(recordIndex)));
         } else if (structure.getKeyType().equals(Finals.STRING_TYPE) ) {
             return toBytes(getKey(recordIndex));
         } else {
             return toBytes(Integer.parseInt(getKey(recordIndex))); // ha mas tipusu, visszaterit majd mast, most stringkent kezeli
-        }
+        }*/
+
+        return toBytes(getKey(recordIndex));
+
     }
 
     public byte[] getValueBytes(int recordIndex)
