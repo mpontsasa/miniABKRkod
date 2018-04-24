@@ -59,18 +59,25 @@ public class Table {
 
     public byte[] getValueBytes(int recordIndex)
     {
-        byte[] res = new byte[0];
+        String res = "";
 
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
-            if (structure.getTypeByIndex(i).equalsIgnoreCase(Finals.INT_TYPE)) {
+
+            
+
+            /*if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
+
+>>>>>>> 878b049e0399f62d84d47c31f8ced5f2bb009d34
                 res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
             } else if (structure.getTypeByIndex(i).equalsIgnoreCase(Finals.STRING_TYPE)) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
-            }
+            }*/
+
+            res += data.get(recordIndex)[i] + Finals.DATA_DELIMITER;
         }
 
-        return res;
+        return toBytes(res);
     }
 
     public String[] getRowByKey(String key){
