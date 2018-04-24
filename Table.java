@@ -43,14 +43,14 @@ public class Table {
         int keyIndex = structure.getKeyIndex();
 
         String[] data  = dataString.split(Finals.DATA_DELIMITER);
-        
+
 
     }
 
     public byte[] getKeyBytes(int recordIndex) {
-        if (structure.getKeyType().equals( Finals.INT_TYPE ) ) {
+        if (structure.getKeyType().equalsIgnoreCase( Finals.INT_TYPE ) ) {
             return toBytes(Integer.parseInt(getKey(recordIndex)));
-        } else if (structure.getKeyType().equals(Finals.STRING_TYPE) ) {
+        } else if (structure.getKeyType().equalsIgnoreCase(Finals.STRING_TYPE) ) {
             return toBytes(getKey(recordIndex));
         } else {
             return toBytes(Integer.parseInt(getKey(recordIndex))); // ha mas tipusu, visszaterit majd mast, most stringkent kezeli
@@ -63,9 +63,9 @@ public class Table {
 
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
-            if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
+            if (structure.getTypeByIndex(i).equalsIgnoreCase(Finals.INT_TYPE)) {
                 res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
-            } else if (structure.getTypeByIndex(i).equals(Finals.STRING_TYPE)) {
+            } else if (structure.getTypeByIndex(i).equalsIgnoreCase(Finals.STRING_TYPE)) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
             }
         }
