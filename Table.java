@@ -63,17 +63,14 @@ public class Table {
 
         for(int i = 0; i <data.get(recordIndex).length; i++)
         {
-<<<<<<< HEAD
-            /*if (structure.getTypeByIndex(i) == Finals.INT_TYPE) {
-=======
-            if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
->>>>>>> 346b1a119414f4e90288e8181c537ef3be8734f1
+            /*if (structure.getTypeByIndex(i).equals(Finals.INT_TYPE)) {
+
                 res = concat(res, toBytes(Integer.parseInt(data.get(recordIndex)[i])));
             } else if (structure.getTypeByIndex(i).equals(Finals.STRING_TYPE)) {
                 res = concat(res, toBytes(data.get(recordIndex)[i]));
             }*/
 
-            res += data.get(recordIndex)[i] +;
+            res += data.get(recordIndex)[i] + Finals.DATA_DELIMITER;
         }
 
         return toBytes(res);
