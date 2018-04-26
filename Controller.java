@@ -43,6 +43,9 @@ public class Controller {
                 else if(words[1].equalsIgnoreCase("TABLE")){
                     createTableCommand(words);
                 }
+                else if(words[1].equalsIgnoreCase("INDEX")){
+                    createIndexCommand(words);
+                }
                 break;
             case "DROP":
                 if (words[1].equalsIgnoreCase("DATABASE")){
@@ -220,6 +223,22 @@ public class Controller {
         }
     }
 
+    public void createIndexCommand(String[] words)throws Exception{
+
+        if (!activeEnviornment.isSetUp())
+        {
+            throw new InvalidSQLCommandException("No database selected");
+        }
+
+        if (!words[3].equalsIgnoreCase("ON"))
+        {
+            throw new InvalidSQLCommandException("Unknown command format.");
+        }
+
+        makeIndexFile(words[4], words[5]);
+
+    }
+
     //MEG KELL IRNI
     public boolean checkPrimaryKeyConstraintOnInsert(){
         return true;
@@ -330,7 +349,7 @@ public class Controller {
     {
         try
         {
-            activeEnviornment.createDB(Finals.INDEX_FILE_NAME + tableName); // the index file
+            activeEnviornment.createDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName); // the index file
 
             Cursor cursor = null;
             cursor = activeEnviornment.getCursor(tableName);
@@ -369,9 +388,16 @@ public class Controller {
             System.out.println();
 
 
-            //for (int i = 0; i < )
 
-            ///itt kell feltolteni az indexallomanyba
+            for (int i = 0; i < indexTable.getRecordCount(); i++)
+            {
+                DatabaseEntry key = new DatabaseEntry(indexTable.getKeyBytes(i));
+                DatabaseEntry data = new DatabaseEntry(indexTable.getValueBytes(i));
+
+                activeEnviornment.insertIntoDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName, key, data);
+            }
+
+
         }
         catch(Exception e)
         {

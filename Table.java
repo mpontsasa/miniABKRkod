@@ -144,4 +144,9 @@ public class Table {
 
         return outputStream.toByteArray( );
     }
+
+    int getRecordCount()
+    {
+        return data.size();
+    }
 }
