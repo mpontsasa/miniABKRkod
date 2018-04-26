@@ -21,7 +21,8 @@ public class Main {
 
             //controller.getActiveEnviornment().printTables();
 
-            //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas\",20, 77, \"ghetto masters\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto MatyasOreg\",60, 60, \"ghetto masters\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto MatyasBarca\",1, 1, \"barca\", 8547)");
             //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas30\",20, 30, \"ghetto masters\", 8547)");
             //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas25\",20, 25, \"ghetto masters\", 8547)");
             //controller.parseSQL("use szia");
@@ -30,9 +31,12 @@ public class Main {
             controller.getActiveEnviornment().getValueByKey("Tabla1", "77");
             controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
             controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
+            controller.getActiveEnviornment().getValueByKey("Tabla1", "1");
+            controller.getActiveEnviornment().getValueByKey("Tabla1","60");
+            controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
 
-
+            //controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
 
 
 
