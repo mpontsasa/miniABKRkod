@@ -240,13 +240,72 @@ public class Controller {
     }
 
     //MEG KELL IRNI
-    public boolean checkPrimaryKeyConstraintOnInsert(){
-        return true;
+    public boolean checkPrimaryKeyConstraintOnInsert(String tableName, String value){
+
+        try
+        {
+            Cursor cursor = null;
+            cursor = activeEnviornment.getCursor(tableName);
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
+                    OperationStatus.SUCCESS) {
+
+                String keyString = new String(foundKey.getData(), "UTF-8");
+
+                if (keyString != value)
+                {
+                    activeEnviornment.closeCursor(cursor);
+                    return false;
+                }
+
+            }
+            activeEnviornment.closeCursor(cursor);
+            return true;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     //MEG KELL IRNI
-    public boolean checkUniqueConstraintOnInsert(){
-        return true;
+    public boolean checkUniqueConstraintOnInsert(String tableName, int columnIndex, String value){
+        try
+        {
+            Cursor cursor = null;
+            cursor = activeEnviornment.getCursor(tableName);
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            TableStructure ts = sqlDatabaseStructure.findTable(tableName);
+
+            if (ts.getKeyIndex() > columnIndex)
+                columnIndex --;
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+
+                String dataString = new String(foundData.getData(), "UTF-8");
+
+                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex].equals(value))
+                {
+                    activeEnviornment.closeCursor(cursor);
+                    return false;
+                }
+
+            }
+            activeEnviornment.closeCursor(cursor);
+            return true;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     //MEG KELL IRNI
@@ -279,7 +338,7 @@ public class Controller {
             }
 
             if(columnIterator.isPrimaryKey()){
-                if(!checkPrimaryKeyConstraintOnInsert()){
+                if(!checkPrimaryKeyConstraintOnInsert(tableName, values[i])){
                     return false;
                 }
             }
@@ -291,7 +350,7 @@ public class Controller {
             }
 
             if(columnIterator.isUnique()){
-                if(!checkUniqueConstraintOnInsert()){
+                if(!checkUniqueConstraintOnInsert(tableName, i, values[i])){
                     return false;
                 }
             }
@@ -319,7 +378,6 @@ public class Controller {
 
         return values;
     }
-
 
     private Table createIndexTable() throws Exception{
         ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null);
@@ -383,11 +441,8 @@ public class Controller {
 
 
             }
-            cursor.close();
+            activeEnviornment.closeCursor(cursor);
             convertIndexHashMapToIndexTable(indexHM, indexTable);
-            System.out.println();
-
-
 
             for (int i = 0; i < indexTable.getRecordCount(); i++)
             {
