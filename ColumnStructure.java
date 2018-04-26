@@ -42,6 +42,9 @@ public class ColumnStructure {
         this.name = name;
         this.type = type;
         hasIndex = false;
+        if(isPrimaryKey){
+            this.isUnique = false;
+        }
     }
 
     @Override
