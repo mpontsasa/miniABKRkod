@@ -260,7 +260,7 @@ public class Controller {
 
                 String keyString = new String(foundKey.getData(), "UTF-8");
 
-                if (keyString != value)
+                if (keyString.equals(value))
                 {
                     activeEnviornment.closeCursor(cursor);
                     return false;
@@ -288,7 +288,7 @@ public class Controller {
 
             TableStructure ts = sqlDatabaseStructure.findTable(tableName);
 
-            if (ts.getKeyIndex() > columnIndex)
+            if (ts.getKeyIndex() < columnIndex)
                 columnIndex --;
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
@@ -326,15 +326,15 @@ public class Controller {
 
             TableStructure ts = sqlDatabaseStructure.findTable(tableName);
 
-            String tableName2 = ts.getColumns().get(columnIndex).getForeignReferenceName().split(".")[1];
-            int columnIndex2 = sqlDatabaseStructure.findTable(tableName2).getIndexOfColumn(ts.getColumns().get(columnIndex).getForeignReferenceName().split(".")[1]);
+            String tableName2 = ts.getColumns().get(columnIndex).getForeignReferenceName().split("\\.")[0];
+            int columnIndex2 = sqlDatabaseStructure.findTable(tableName2).getIndexOfColumn(ts.getColumns().get(columnIndex).getForeignReferenceName().split("\\.")[1]);
 
             TableStructure ts2 = sqlDatabaseStructure.findTable(tableName2);
 
-            if (ts.getKeyIndex() > columnIndex)
+            if (ts.getKeyIndex() < columnIndex)
                 columnIndex --;
 
-            if (ts2.getKeyIndex() > columnIndex2) {
+            if (ts2.getKeyIndex() < columnIndex2) {
                 columnIndex2 --;
             }
 
@@ -344,7 +344,7 @@ public class Controller {
 
                 String dataString = new String(foundData.getData(), "UTF-8");
 
-                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex].equals(value))
+                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex2].equals(value))
                 {
                     activeEnviornment.closeCursor(cursor);
                     return true;
@@ -506,12 +506,11 @@ public class Controller {
                 activeEnviornment.insertIntoDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName, key, data);
             }
 
-<<<<<<< HEAD
-=======
+
             sqlDatabaseStructure.findTable(tableName).findColumn(columnName).setHasIndex(true);
 
 
->>>>>>> cfc981da5960a29a91dbdc6b36423033e19ac2f9
+
         }
         catch(Exception e)
         {
