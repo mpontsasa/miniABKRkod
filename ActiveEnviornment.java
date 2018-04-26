@@ -116,4 +116,33 @@ public class ActiveEnviornment {
         enviornment.close();
 
     }
+
+    public Cursor getCursor(String tableName)
+    {
+        openEnviornment();
+
+        Database myDatabase = null;
+        DatabaseConfig dbConfig = new DatabaseConfig();
+        dbConfig.setAllowCreate(false);
+        myDatabase = enviornment.openDatabase(null, tableName, dbConfig);
+
+        Cursor cursor = null;
+
+        cursor = myDatabase.openCursor(null, null);
+
+        return cursor;
+    }
+
+    public void closeCursor(Cursor cursor)
+    {
+        Database myDB =  cursor.getDatabase();
+        cursor.close();
+
+        myDB.close();
+        enviornment.close();
+    }
+
+    public Environment getEnviornment() {
+        return enviornment;
+    }
 }

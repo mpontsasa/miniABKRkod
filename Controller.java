@@ -1,4 +1,7 @@
+import com.sleepycat.je.Cursor;
 import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.LockMode;
+import com.sleepycat.je.OperationStatus;
 
 import java.io.File;
 import java.lang.module.InvalidModuleDescriptorException;
@@ -297,6 +300,41 @@ public class Controller {
         return values;
     }
 
+    public void makeIndexFile (String tableName, String columnName)
+    {
+        try
+        {
+            activeEnviornment.createDB(Finals.INDEX_FILE_NAME + tableName); // the index file
+
+            Cursor cursor = null;
+            cursor = activeEnviornment.getCursor(tableName);
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
+                    OperationStatus.SUCCESS) {
+
+                String keyString = new String(foundKey.getData(), "UTF-8");
+                String dataString = new String(foundData.getData(), "UTF-8");
+                //System.out.println("Key | Data : " + keyString + " | " + dataString + "");
+
+
+                ///itt kell elkesziteni az indexfilenak megfelelo szerkezetet
+
+
+            }
+            cursor.close();
+
+            ///itt kell feltolteni az indexallomanyba
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
     public static boolean deleteDirectory(File directory) {
         if(directory.exists()){
             File[] files = directory.listFiles();
@@ -320,5 +358,6 @@ public class Controller {
 
     public ActiveEnviornment getActiveEnviornment() {
         return activeEnviornment;
+
     }
 }

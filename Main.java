@@ -43,7 +43,6 @@ public class Main {
             //controller.parseSQL("create database szia");
 
 
-
         }
         catch (InvalidSQLCommandException isqlce)
         {
