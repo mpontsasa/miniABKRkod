@@ -27,15 +27,17 @@ public class Main {
             //controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
 
-            //controller.getActiveEnviornment().getValueByKey("Tabla1", "77");
-            //controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
-            //controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
-            //controller.getActiveEnviornment().getValueByKey("Tabla1", "1");
-            //controller.getActiveEnviornment().getValueByKey("Tabla1","60");
-            //controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
+
+            controller.getActiveEnviornment().getValueByKey("Tabla1", "77");
+            controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
+            controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
+            controller.getActiveEnviornment().getValueByKey("Tabla1", "1");
+            controller.getActiveEnviornment().getValueByKey("Tabla1","60");
+            controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
+            controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "barca");
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
 
-            //controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
+           // controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
 
             //int a = Integer.parseInt("szia");
 

@@ -124,6 +124,29 @@ public class TableStructure {
         return -1;
     }
 
+    public ColumnStructure findColumn(String columnName){
+
+
+        for(ColumnStructure cs: columns){
+            if (cs.getName().equalsIgnoreCase(columnName)){
+                return cs;
+            }
+        }
+        return null;
+    }
+
+
+    public ArrayList<String> getUniqueColumnNames(){
+
+        ArrayList<String> res = new ArrayList<>();
+        for(ColumnStructure c : columns){
+            if (c.isUnique()){
+                res.add(c.getName());
+            }
+        }
+        return res;
+    }
+
     public String getTypeByIndex(int index){
         return columns.get(index).getType();
     }

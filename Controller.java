@@ -151,6 +151,12 @@ public class Controller {
 
         TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
+
+
+        for(String columnName : tableStructure.getUniqueColumnNames()){
+            makeIndexFile(tableStructure.getName(),columnName);
+        }
+
         sqlDatabaseStructure.toJson();
     }
 
@@ -500,6 +506,12 @@ public class Controller {
                 activeEnviornment.insertIntoDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName, key, data);
             }
 
+<<<<<<< HEAD
+=======
+            sqlDatabaseStructure.findTable(tableName).findColumn(columnName).setHasIndex(true);
+
+
+>>>>>>> cfc981da5960a29a91dbdc6b36423033e19ac2f9
         }
         catch(Exception e)
         {
