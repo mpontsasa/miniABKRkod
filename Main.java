@@ -18,7 +18,6 @@ public class Main {
             controller.parseSQL("use szia");
             //controller.parseSQL("create table Tabla1 (nev string , kor int, id int primary, kedvencCsapat string, kedvencSzam int)");
             //controller.parseSQL("create table Tabla1 (nev string , kor int, id int primary, kedvencCsapat string, kedvencSzam int)");
-
             //controller.getActiveEnviornment().printTables();
 
             //controller.parseSQL("insert into Tabla1 values (\"Foszto MatyasOreg\",60, 60, \"ghetto masters\", 8547)");
@@ -28,18 +27,15 @@ public class Main {
             //controller.parseSQL("use szia");
             //System.out.println(controller.getSqlDatabaseStructure());
 
-            controller.getActiveEnviornment().getValueByKey("Tabla1", "77");
-            controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
-            controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
-            controller.getActiveEnviornment().getValueByKey("Tabla1", "1");
-            controller.getActiveEnviornment().getValueByKey("Tabla1","60");
-            controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
+            //controller.getActiveEnviornment().getValueByKey("Tabla1", "77");
+            //controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
+            //controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
+            //controller.getActiveEnviornment().getValueByKey("Tabla1", "1");
+            //controller.getActiveEnviornment().getValueByKey("Tabla1","60");
+            //controller.getActiveEnviornment().getValueByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
 
             //controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
-
-
-
 
             //int a = Integer.parseInt("szia");
 

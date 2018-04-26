@@ -239,7 +239,6 @@ public class Controller {
 
     }
 
-    //MEG KELL IRNI
     public boolean checkPrimaryKeyConstraintOnInsert(String tableName, String value){
 
         try
@@ -272,7 +271,6 @@ public class Controller {
         }
     }
 
-    //MEG KELL IRNI
     public boolean checkUniqueConstraintOnInsert(String tableName, int columnIndex, String value){
         try
         {
@@ -308,9 +306,54 @@ public class Controller {
         }
     }
 
-    //MEG KELL IRNI
-    public boolean checkForeignKeyConstraintOnInsert(){
-        return true;
+    //NEM MUSZAJ: ellenorzes, hogy a forign key referencere nincs-e indextomb
+    public boolean checkForeignKeyConstraintOnInsert(String tableName, int columnIndex, String value){
+
+        //HA VAN INDEX MEG KELL IRNI
+        //..else: (ha nincs index):
+        try
+        {
+            Cursor cursor = null;
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            TableStructure ts = sqlDatabaseStructure.findTable(tableName);
+
+            String tableName2 = ts.getColumns().get(columnIndex).getForeignReferenceName().split(".")[1];
+            int columnIndex2 = sqlDatabaseStructure.findTable(tableName2).getIndexOfColumn(ts.getColumns().get(columnIndex).getForeignReferenceName().split(".")[1]);
+
+            TableStructure ts2 = sqlDatabaseStructure.findTable(tableName2);
+
+            if (ts.getKeyIndex() > columnIndex)
+                columnIndex --;
+
+            if (ts2.getKeyIndex() > columnIndex2) {
+                columnIndex2 --;
+            }
+
+            cursor = activeEnviornment.getCursor(tableName2);
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+
+                String dataString = new String(foundData.getData(), "UTF-8");
+
+                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex].equals(value))
+                {
+                    activeEnviornment.closeCursor(cursor);
+                    return true;
+                }
+
+            }
+            activeEnviornment.closeCursor(cursor);
+            return false;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
     public boolean validateValuesForInsert(String tableName, String[] values)
@@ -344,7 +387,7 @@ public class Controller {
             }
 
             if(columnIterator.isForeignKey()){
-                if(!checkForeignKeyConstraintOnInsert()){
+                if(!checkForeignKeyConstraintOnInsert(tableName, i, values[i])){
                     return false;
                 }
             }
@@ -388,7 +431,6 @@ public class Controller {
         TableStructure  tableStructure = new TableStructure(name, c);
 
         return (new Table(tableStructure));
-
 
     }
 
@@ -446,8 +488,6 @@ public class Controller {
                 else {
                     indexHM.put(indexedColumnValue,keyString);
                 }
-
-
             }
             activeEnviornment.closeCursor(cursor);
             convertIndexHashMapToIndexTable(indexHM, indexTable);
@@ -459,7 +499,6 @@ public class Controller {
 
                 activeEnviornment.insertIntoDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName, key, data);
             }
-
 
         }
         catch(Exception e)
