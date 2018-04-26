@@ -321,7 +321,7 @@ public class Controller {
     }
 
 
-    private Table createIndexTable() throws Exception{
+    private Table createIndexTable(String name) throws Exception{
         ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null);
         ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE,false,false,false,null);
         ArrayList<ColumnStructure> c = new ArrayList<>();
@@ -329,7 +329,7 @@ public class Controller {
 
 
 
-        TableStructure  tableStructure = new TableStructure("index table", c);
+        TableStructure  tableStructure = new TableStructure(name, c);
 
         return (new Table(tableStructure));
 
@@ -341,7 +341,7 @@ public class Controller {
         for(String key : hm.keySet()){
 
             String value = hm.get(key);
-            indexTable.addRecord(key,value);
+            indexTable.addIndexRecord(key,value);
         }
     }
 
@@ -358,9 +358,17 @@ public class Controller {
             DatabaseEntry foundData = new DatabaseEntry();
 
 
-            Table indexTable = createIndexTable();
-
+            Table indexTable = createIndexTable(columnName);
             HashMap<String,String> indexHM = new HashMap<>();
+            int indexOfIndexedColumn = sqlDatabaseStructure.findTable(tableName).getIndexOfColumn(columnName);
+
+            if(indexOfIndexedColumn == -1){
+                throw new Exception("The column does no exist in the table(index)");
+            }
+            if(indexOfIndexedColumn > sqlDatabaseStructure.findTable(tableName).getKeyIndex()){
+                indexOfIndexedColumn--;
+            }
+
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
                     OperationStatus.SUCCESS) {
@@ -370,15 +378,17 @@ public class Controller {
                 //System.out.println("Key | Data : " + keyString + " | " + dataString + "");
 
 
+
+                String indexedColumnValue = dataString.split(Finals.DATA_DELIMITER)[indexOfIndexedColumn];
                 ///itt kell elkesziteni az indexfilenak megfelelo szerkezetet
-                if(indexHM.containsKey(keyString)){
-                    String data = indexHM.get(keyString);
-                    data += dataString;
+                if(indexHM.containsKey(indexedColumnValue)){
+                    String data = indexHM.get(indexedColumnValue);
                     data += Finals.INDEX_DATA_SEPARATOR;
-                    indexHM.replace(keyString,data);
+                    data += keyString;
+                    indexHM.replace(indexedColumnValue,data);
                 }
                 else {
-                    indexHM.put(keyString,dataString);
+                    indexHM.put(indexedColumnValue,keyString);
                 }
 
 

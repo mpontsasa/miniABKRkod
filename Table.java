@@ -25,6 +25,13 @@ public class Table {
         data.add(onlyRecord);
     }
 
+
+    public int getIndexOfColumn(String columnName){
+
+        return structure.getIndexOfColumn(columnName);
+
+    }
+
     public String getKey(int recordIndex){
 
         //int keyIndex = structure.getKeyIndex();
@@ -32,7 +39,7 @@ public class Table {
         return data.get(recordIndex)[structure.getKeyIndex()];
     }
 
-    public void addRecord(String indexKey, String indexData){
+    public void addIndexRecord(String indexKey, String indexData){
 
         data.add(new String[]{indexKey, indexData});
     }
@@ -75,8 +82,7 @@ public class Table {
 
     }
 
-    public byte[] getValueBytes(int recordIndex)
-    {
+    public byte[] getValueBytes(int recordIndex) {
         String res = "";
 
         int keyInd = structure.getKeyIndex();
@@ -112,8 +118,7 @@ public class Table {
         return null;
     }
 
-    byte[] toBytes(int i)
-    {
+    byte[] toBytes(int i) {
         byte[] result = new byte[4];
 
         result[0] = (byte) (i >> 24);

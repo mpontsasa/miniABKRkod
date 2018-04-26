@@ -113,6 +113,17 @@ public class TableStructure {
         return keyIndex;
     }
 
+    public int getIndexOfColumn(String columnName){
+
+        for(int i = 0; i < columns.size(); i++){
+            if(columns.get(i).getName().equalsIgnoreCase(columnName)){
+                return  i;
+            }
+        }
+
+        return -1;
+    }
+
     public String getTypeByIndex(int index){
         return columns.get(index).getType();
     }
