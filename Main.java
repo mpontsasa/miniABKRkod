@@ -4,6 +4,7 @@ import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class Main {
 
@@ -30,6 +31,8 @@ public class Main {
             controller.getActiveEnviornment().getValueByKey("Tabla1", "30");
             controller.getActiveEnviornment().getValueByKey("Tabla1", "25");
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
+
+
 
 
 

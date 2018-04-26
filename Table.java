@@ -32,6 +32,10 @@ public class Table {
         return data.get(recordIndex)[structure.getKeyIndex()];
     }
 
+    public void addRecord(String indexKey, String indexData){
+
+        data.add(new String[]{indexKey, indexData});
+    }
 
     public void addRecord(DatabaseEntry keyEntry, DatabaseEntry dataEntry){
 

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Controller {
@@ -300,6 +301,31 @@ public class Controller {
         return values;
     }
 
+
+    private Table createIndexTable() throws Exception{
+        ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null);
+        ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE,false,false,false,null);
+        ArrayList<ColumnStructure> c = new ArrayList<>();
+        c.add(key);c.add(data);
+
+
+
+        TableStructure  tableStructure = new TableStructure("index table", c);
+
+        return (new Table(tableStructure));
+
+
+    }
+
+    private void convertIndexHashMapToIndexTable(HashMap<String,String> hm, Table indexTable){
+
+        for(String key : hm.keySet()){
+
+            String value = hm.get(key);
+            indexTable.addRecord(key,value);
+        }
+    }
+
     public void makeIndexFile (String tableName, String columnName)
     {
         try
@@ -312,7 +338,10 @@ public class Controller {
             DatabaseEntry foundKey = new DatabaseEntry();
             DatabaseEntry foundData = new DatabaseEntry();
 
-            Table indexTable;
+
+            Table indexTable = createIndexTable();
+
+            HashMap<String,String> indexHM = new HashMap<>();
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
                     OperationStatus.SUCCESS) {
@@ -323,12 +352,24 @@ public class Controller {
 
 
                 ///itt kell elkesziteni az indexfilenak megfelelo szerkezetet
+                if(indexHM.containsKey(keyString)){
+                    String data = indexHM.get(keyString);
+                    data += dataString;
+                    data += Finals.INDEX_DATA_SEPARATOR;
+                    indexHM.replace(keyString,data);
+                }
+                else {
+                    indexHM.put(keyString,dataString);
+                }
 
 
             }
             cursor.close();
+            convertIndexHashMapToIndexTable(indexHM, indexTable);
+            System.out.println();
 
-            for (int i = 0; i < )
+
+            //for (int i = 0; i < )
 
             ///itt kell feltolteni az indexallomanyba
         }
