@@ -312,6 +312,8 @@ public class Controller {
             DatabaseEntry foundKey = new DatabaseEntry();
             DatabaseEntry foundData = new DatabaseEntry();
 
+            Table indexTable;
+
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
                     OperationStatus.SUCCESS) {
 
@@ -325,6 +327,8 @@ public class Controller {
 
             }
             cursor.close();
+
+            for (int i = 0; i < )
 
             ///itt kell feltolteni az indexallomanyba
         }
