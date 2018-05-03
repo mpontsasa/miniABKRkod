@@ -30,6 +30,8 @@ public class Main {
             }
             else {
                 controller.parseSQL("use szia");
+                controller.parseSQL("select a a a frOm");
+
             }
 
 
@@ -53,7 +55,7 @@ public class Main {
 
 
 
-            controller.getActiveEnviornment().printDataByKey("Tabla1", "77");
+            /*controller.getActiveEnviornment().printDataByKey("Tabla1", "77");
             controller.getActiveEnviornment().printDataByKey("Tabla1", "30");
             controller.getActiveEnviornment().printDataByKey("Tabla1", "25");
             controller.getActiveEnviornment().printDataByKey("Tabla1", "1");
@@ -63,7 +65,7 @@ public class Main {
             controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
             controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "barca");
             controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "CFR Cluj");
-            //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
+            //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");*/
 
            // controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
 

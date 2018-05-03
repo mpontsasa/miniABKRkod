@@ -5,6 +5,8 @@ import com.sleepycat.je.OperationStatus;
 
 import java.io.File;
 import java.lang.module.InvalidModuleDescriptorException;
+import java.lang.reflect.Array;
+import java.nio.channels.SelectableChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -297,9 +299,27 @@ public class Controller {
             throw new InvalidSQLCommandException("No database selected");
         }
 
-        ArrayList<String> mezok;
+        ArrayList<String> selectedFields = new ArrayList<>();
+        ArrayList<String> selectionTables = new ArrayList<>();
+        ArrayList<String> selectionConstraints = new ArrayList<>();
 
-        for (int i = 0; !words[i].equalsIgnoreCase("FROM"))
+        int i;
+        for (i = 1; i < words.length && !words[i].equalsIgnoreCase("FROM"); i++)
+        {
+            selectedFields.add(words[i]);
+        }
+
+        if (i == words.length)
+        {
+            throw new InvalidSQLCommandException("Missing FROM statement");
+        }
+
+        for (i++; i < words.length && !words[i].equalsIgnoreCase("WHERE") && !words[i].equalsIgnoreCase("WHERE"); i++)
+        {
+            selectionTables.add(words[i]);
+        }
+
+                
 
     }
 
