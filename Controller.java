@@ -58,6 +58,9 @@ public class Controller {
             case "INSERT":
                 insertIntoCommand(words);
                 break;
+            case "SELECT":
+                selectCommand(words);
+                break;
         }
     }
 
@@ -157,6 +160,10 @@ public class Controller {
             makeIndexFile(tableStructure.getName(),columnName);
         }
 
+        for(String columnName : tableStructure.getForeignColumnNames()){
+            makeIndexFile(tableStructure.getName(),columnName);
+        }
+
         sqlDatabaseStructure.toJson();
     }
 
@@ -233,7 +240,6 @@ public class Controller {
         }
     }
 
-
     public void insertIntoCommand(String[] words)throws Exception{
 
         if (!activeEnviornment.isSetUp())
@@ -280,6 +286,20 @@ public class Controller {
         }
 
         makeIndexFile(words[4], words[5]);
+
+    }
+
+    public void selectCommand(String[] words)throws Exception
+    {
+        // SELECT tabla1.mezo1 tabla2.mezo2 FROM tabla1 tabla2 WHERE tabla1.mezo1=tabla2.mezo2
+        if (!activeEnviornment.isSetUp())
+        {
+            throw new InvalidSQLCommandException("No database selected");
+        }
+
+        ArrayList<String> mezok;
+
+        for (int i = 0; !words[i].equalsIgnoreCase("FROM"))
 
     }
 

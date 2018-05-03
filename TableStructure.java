@@ -146,6 +146,17 @@ public class TableStructure {
         return res;
     }
 
+    public ArrayList<String> getForeignColumnNames(){
+
+        ArrayList<String> res = new ArrayList<>();
+        for(ColumnStructure c : columns){
+            if (c.isForeignKey()){
+                res.add(c.getName());
+            }
+        }
+        return res;
+    }
+
     public int getNumberOfColumns(){
         return columns.size();
     }
@@ -161,5 +172,4 @@ public class TableStructure {
     public ColumnStructure getColumnStructure(int index){
         return columns.get(index);
     }
-
 }
