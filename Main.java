@@ -28,19 +28,24 @@ public class Main {
 
                 controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
             }
+            else {
+                controller.parseSQL("use szia");
+            }
 
-            controller.parseSQL("use szia");
+
+
             //controller.parseSQL("create table Tabla1 (nev string , kor int, id int primary, kedvencCsapat string, kedvencSzam int)");
             //controller.parseSQL("create table Tabla2 (nev string unique , kor int, id int primary, masikNev string references Tabla1.nev)");
-//            controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas25\",20, 25, \"ghetto masters\", 8547)");
-//            controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas Teszt Insert\",19, 88, \"barca\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas25\",20, 45, \"ghetto masters\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas Teszt Insert\",19, 88, \"barca\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas CFR Cluj\",19, 56, \"CFR Cluj\", 8547)");
 //
 //           controller.parseSQL("insert into Tabla2 values (\"Foszto MatyasOreg\",60, 60, \"Foszto MatyasOreg\")");
             //          controller.parseSQL("insert into Tabla2 values (\"Foszto MatyasOreg2\",70, 70, \"Foszto MatyasOreg\")");
             //controller.getActiveEnviornment().printTables();
 
 
-            controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas Teszt Insertrossz\",19, 88, \"barca\", 8547)");
+            //controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas Teszt Insertrossz\",19, 98, \"barca\", 8547)");
             //controller.parseSQL("use szia");
 
 
@@ -57,7 +62,7 @@ public class Main {
             //controller.getActiveEnviornment().printDataByKey("Tabla2","70");
             controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "ghetto masters");
             controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "barca");
-
+            controller.getActiveEnviornment().printDataByKey(Finals.INDEX_FILE_NAME + "Tabla1_kedvencCsapat" , "CFR Cluj");
             //controller.parseSQL("create table szia        (      szerussz       int unique  primary    ,     szia string    )");
 
            // controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");

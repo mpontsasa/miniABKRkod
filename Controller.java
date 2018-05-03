@@ -127,7 +127,7 @@ public class Controller {
                 reference = fcpList.get(fcpList.indexOf("references") + 1);
             }
 
-            result.add(new ColumnStructure(name, type, primary, foreign, unique, reference));
+            result.add(new ColumnStructure(name, type, primary, foreign, unique, reference, false));//itt false-ra inicializalom a hasIndex-et mert a create tablenem meg nincs index file
         }
         //System.out.println(command);
 
@@ -467,8 +467,8 @@ public class Controller {
     }
 
     private Table createIndexTable(String name) throws Exception{
-        ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null);
-        ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE,false,false,false,null);
+        ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null,false);
+        ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE,false,false,false,null, false);
         ArrayList<ColumnStructure> c = new ArrayList<>();
         c.add(key);c.add(data);
 
@@ -538,7 +538,9 @@ public class Controller {
             for (int i = 0; i < indexTable.getRecordCount(); i++)
             {
                 DatabaseEntry key = new DatabaseEntry(indexTable.getKeyBytes(i));
-                DatabaseEntry data = new DatabaseEntry(indexTable.getValueBytes(i));
+                DatabaseEntry data = new DatabaseEntry(indexTable.getIndexValueBytes(i));
+
+                //cut off the data delimeter
 
                 activeEnviornment.insertIntoDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName, key, data);
             }

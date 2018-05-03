@@ -8,6 +8,7 @@ public class Finals {
     public static final String IS_PRIMARY_TO_STRING = "IS_PRIMARY";
     public static final String IS_FOREIGN_TO_STRING = "IS_FOREIGN";
     public static final String IS_UNIQUE_TO_STRING = "IS_UNIQUE";
+    public static final String HAS_INDEX_TO_STRING = "HAS_INDEX";
     public static final String COLUMN_TO_STRING_SEPARATOR = "@";
 
     public static final String JSON_COLUMN_NAME_KEY = "Column name";
@@ -16,6 +17,7 @@ public class Finals {
     public static final String JSON_COLUMN_ISFOREIGN_KEY = "Is foreign?";
     public static final String JSON_COLUMN_ISUNIQUE = "Is unique?";
     public static final String JSON_COLUMN_REFERENCE_KEY = "Foreign reference";
+    public static final String JSON_COLUMN_HAS_INDEX = "Has index file?";
 
     public static final String JSON_TABLE_NAME_KEY = "Table name";
     public static final String JSON_TABLE_COLUMNS_KEY = "Columns";

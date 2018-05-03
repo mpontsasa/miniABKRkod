@@ -29,7 +29,7 @@ public class ColumnStructure {
 //        this.type = type;
 //    }
 
-    public ColumnStructure(String name, String type,boolean isPrimaryKey, boolean isForeignKey,boolean isUnique, String foreignReferenceName) {
+    public ColumnStructure(String name, String type,boolean isPrimaryKey, boolean isForeignKey,boolean isUnique, String foreignReferenceName, boolean hasIndex) {
         this.isPrimaryKey = isPrimaryKey;
         this.isForeignKey = isForeignKey;
         this.isUnique = isUnique;
@@ -41,7 +41,7 @@ public class ColumnStructure {
         }
         this.name = name;
         this.type = type;
-        hasIndex = false;
+        this.hasIndex = hasIndex;
         if(isPrimaryKey){
             this.isUnique = false;
         }
@@ -79,6 +79,9 @@ public class ColumnStructure {
         if(isUnique){
             result = result + Finals.COLUMN_TO_STRING_SEPARATOR + Finals.IS_UNIQUE_TO_STRING;
         }
+        if(hasIndex){
+            result += Finals.COLUMN_TO_STRING_SEPARATOR + Finals.HAS_INDEX_TO_STRING;
+        }
 
 
 
@@ -106,12 +109,14 @@ public class ColumnStructure {
 
         JSONObject columnJSON = new JSONObject();
 
-        columnJSON.put(Finals.JSON_COLUMN_NAME_KEY,name);
-        columnJSON.put(Finals.JSON_COLUMN_TYPE_KEY, type);
-        columnJSON.put(Finals.JSON_COLUMN_ISPRIMARY_KEY,isPrimaryKey);
-        columnJSON.put(Finals.JSON_COLUMN_ISFOREIGN_KEY, isForeignKey);
+        columnJSON.put(Finals.JSON_COLUMN_HAS_INDEX, hasIndex);
         columnJSON.put(Finals.JSON_COLUMN_ISUNIQUE, isUnique);
         columnJSON.put(Finals.JSON_COLUMN_REFERENCE_KEY, foreignReferenceName);
+        columnJSON.put(Finals.JSON_COLUMN_ISFOREIGN_KEY, isForeignKey);
+        columnJSON.put(Finals.JSON_COLUMN_TYPE_KEY, type);
+        columnJSON.put(Finals.JSON_COLUMN_ISPRIMARY_KEY,isPrimaryKey);
+        columnJSON.put(Finals.JSON_COLUMN_NAME_KEY,name);
+
 
 
         return columnJSON;
