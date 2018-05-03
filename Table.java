@@ -106,6 +106,13 @@ public class Table {
         return toBytes(res);
     }
 
+    public byte[] getIndexValueBytes(int recordIndex) {
+        String res = data.get(recordIndex)[1];
+        return toBytes(res);
+    }
+
+
+
     public String[] getRowByKey(String key){
 
         int keyIndex = structure.getKeyIndex();

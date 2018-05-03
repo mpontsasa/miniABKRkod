@@ -30,8 +30,9 @@ public class JsonIOMaster {
         boolean isColumnForeignKey = jsonObject.getBoolean(Finals.JSON_COLUMN_ISFOREIGN_KEY);
         boolean isUnique = jsonObject.getBoolean(Finals.JSON_COLUMN_ISUNIQUE);
         String columnForeignReference = jsonObject.getString(Finals.JSON_COLUMN_REFERENCE_KEY);
+        boolean hasIndex = jsonObject.getBoolean(Finals.JSON_COLUMN_HAS_INDEX);
 
-        return new ColumnStructure(columnName,columnType,isColumnPrimaryKey,isColumnForeignKey,isUnique,columnForeignReference);
+        return new ColumnStructure(columnName,columnType,isColumnPrimaryKey,isColumnForeignKey,isUnique,columnForeignReference, hasIndex);
 
     }
 
