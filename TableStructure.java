@@ -135,7 +135,6 @@ public class TableStructure {
         return null;
     }
 
-
     public ArrayList<String> getUniqueColumnNames(){
 
         ArrayList<String> res = new ArrayList<>();
@@ -147,12 +146,20 @@ public class TableStructure {
         return res;
     }
 
+    public int getNumberOfColumns(){
+        return columns.size();
+    }
+
     public String getTypeByIndex(int index){
         return columns.get(index).getType();
     }
 
     public String getKeyType(){
         return columns.get(keyIndex).getType();
+    }
+
+    public ColumnStructure getColumnStructure(int index){
+        return columns.get(index);
     }
 
 }

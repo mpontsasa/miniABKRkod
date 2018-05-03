@@ -150,10 +150,16 @@ public class Table {
         return outputStream.toByteArray( );
     }
 
-
-
     int getRecordCount()
     {
         return data.size();
+    }
+
+    public TableStructure getStructure() {
+        return structure;
+    }
+
+    public ColumnStructure getColumnStructure(int index){
+        return structure.getColumnStructure(index);
     }
 }

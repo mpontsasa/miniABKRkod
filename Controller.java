@@ -198,6 +198,42 @@ public class Controller {
         sqlDatabaseStructure.toJson();
     }
 
+    private void updateIndexes(String tableName, String[] values)
+    {
+        try
+        {
+            Table tempTable = new Table(sqlDatabaseStructure.findTable(tableName), values);
+
+            for(int i = 0; i < sqlDatabaseStructure.findTable(tableName).getNumberOfColumns(); i++)
+            {
+
+                if (tempTable.getColumnStructure(i).isHasIndex()) {
+
+                    String indexFileName = Finals.INDEX_FILE_NAME + tableName + "_" + tempTable.getColumnStructure(i).getName();
+                    String data = activeEnviornment.getValueByKey(indexFileName,values[i]);
+                    DatabaseEntry keyEnrty = new DatabaseEntry(values[i].getBytes());
+                    DatabaseEntry dataEntry;
+                    //ha nincs az index fileban ilyen kulcsu entry, akkor letrehozunk egy ujat, ha van, akkor a vegere fuzzuk az uj adatot
+                    if(data == null){
+                        dataEntry = new DatabaseEntry((Finals.INDEX_DATA_SEPARATOR + values[tempTable.getStructure().getKeyIndex()]).getBytes());
+                    }
+                    else {
+                        data += (Finals.INDEX_DATA_SEPARATOR + values[tempTable.getStructure().getKeyIndex()]);
+                        dataEntry = new DatabaseEntry(data.getBytes());
+
+                    }
+                    activeEnviornment.insertIntoDB(indexFileName, keyEnrty, dataEntry);
+
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
     public void insertIntoCommand(String[] words)throws Exception{
 
         if (!activeEnviornment.isSetUp())
@@ -219,7 +255,9 @@ public class Controller {
             DatabaseEntry theKey = new DatabaseEntry(tempTable.getKeyBytes(0));
             DatabaseEntry theData = new DatabaseEntry(tempTable.getValueBytes(0));
 
-            tempTable.addRecord(theKey, theData);//matyi tesztel
+            updateIndexes(words[2], values);
+
+            //tempTable.addRecord(theKey, theData);//matyi tesztel
 
             activeEnviornment.insertIntoDB(words[2], theKey, theData);
         }
@@ -474,8 +512,7 @@ public class Controller {
             }
 
 
-            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
-                    OperationStatus.SUCCESS) {
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
 
                 String keyString = new String(foundKey.getData(), "UTF-8");
                 String dataString = new String(foundData.getData(), "UTF-8");
@@ -508,8 +545,7 @@ public class Controller {
 
 
             sqlDatabaseStructure.findTable(tableName).findColumn(columnName).setHasIndex(true);
-
-
+            sqlDatabaseStructure.toJson();
 
         }
         catch(Exception e)
