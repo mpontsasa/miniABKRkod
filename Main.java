@@ -30,7 +30,7 @@ public class Main {
             }
             else {
                 controller.parseSQL("use szia");
-                controller.parseSQL("select a a a frOm");
+                controller.parseSQL("select a a a frOm szia egy ketto where hello=\"szeerusz fiuu\" and azigen=5 and jojo=99");
 
             }
 

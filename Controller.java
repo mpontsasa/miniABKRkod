@@ -319,7 +319,10 @@ public class Controller {
             selectionTables.add(words[i]);
         }
 
-                
+        String constraints = String.join(" ",Arrays.copyOfRange(words,i,words.length));
+        String[] constraintElements = constraints.split("and");
+
+                //ok boi ez nem megy s kesz. vegig kell jarni emrt a stringek belsejeben lehet and szoval nem lehet and szerint splitelni na whatever
 
     }
 
