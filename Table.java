@@ -1,13 +1,71 @@
-import com.sleepycat.je.DatabaseEntry;
+import com.sleepycat.je.*;
 
 import java.io.ByteArrayOutputStream;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Table {
 
     private TableStructure structure;
     private ArrayList<String[]> data;
+
+    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<Pair> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment)// a constraints nem pairs hanem Constraint lesz
+    {
+        //......................................beallitom az elso tablanak
+        structure = sqlDatabaseStructure.findTable(selected.get(0).getTableName());
+
+        try
+        {
+            Cursor cursor = null;
+            cursor = activeEnviornment.getCursor(selected.get(0).getTableName());
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+
+                //IDE KELL A CONSTRAINT ELLENORZESE
+                this.addRecord(foundKey, foundData);
+            }
+            activeEnviornment.closeCursor(cursor);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        for(ColumnStructure cs : structure.getColumns())
+        {
+            boolean need = false;
+            for(Field f : selected)
+            {
+                if (cs.getName() == f.getFieldName() && selected.get(0).getTableName() == f.getTableName())
+                    need = true;
+            }
+
+            for (Pair p : joins)
+            {
+                if (cs.getName() == p.getFirst().getFieldName() && selected.get(0).getTableName() == p.getFirst().getTableName())
+                    need = true;
+
+                if (cs.getName() == p.getSecond().getFieldName() && selected.get(0).getTableName() == p.getSecond().getTableName())
+                    need = true;
+
+            }
+
+            if (need == false)
+            {
+                removeColumn(cs.getName());
+            }
+        }
+
+        //........................eddig benne van az elso mezohoz tartozo tabla Constraint szerint szurve
+
+
+        structure.printHeader();
+
+    }
 
     public Table(TableStructure structure) {
         this.structure = structure;
@@ -82,6 +140,36 @@ public class Table {
 
     }
 
+    public void removeColumn(String columnName)
+    {
+        int index = structure.getIndexOfColumn(columnName);
+
+        structure.getColumnStructure(index).setPrimaryKey(false);
+
+        try
+        {
+            structure.removeColumnByName(columnName);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        for (String[] record : data)
+        {
+            for (int i = index; i < record.length - 1; i++)
+            {
+                record[i] = record[i + 1];
+            }
+            record = Arrays.copyOf(record, record.length-1);
+        }
+    }
+
+    public void print()
+    {
+        structure.printHeader();
+    }
+
     public byte[] getValueBytes(int recordIndex) {
         String res = "";
 
@@ -110,8 +198,6 @@ public class Table {
         String res = data.get(recordIndex)[1];
         return toBytes(res);
     }
-
-
 
     public String[] getRowByKey(String key){
 

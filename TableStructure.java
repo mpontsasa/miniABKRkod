@@ -14,9 +14,6 @@ public class TableStructure {
         this.name = name;
         this.columns = columns;//because we are going to remove the key column from this.columns, but dont want to hurt the parameter list
 
-
-
-
         //validate multiple primary keys and set column index
         boolean hasPrimary = false;
         for(int i = 0; i < columns.size(); i++){
@@ -35,6 +32,11 @@ public class TableStructure {
             throw new Exception("No primary key in table!");
         }
 
+    }
+
+    public void removeColumnByName(String columnName) throws Exception
+    {
+        removeColumn(getColumnStructure(getIndexOfColumn(columnName)));
     }
 
     public void removeColumn(ColumnStructure c) throws Exception{
@@ -68,6 +70,14 @@ public class TableStructure {
         }
 
         return result.toString();
+    }
+
+    public  void printHeader()
+    {
+        for (ColumnStructure cs : columns)
+        {
+            System.out.println(cs.getName() + "\t");
+        }
     }
 
     public JSONObject toJson(){
