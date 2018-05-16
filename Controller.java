@@ -319,10 +319,20 @@ public class Controller {
             selectionTables.add(words[i]);
         }
 
-        String constraints = String.join(" ",Arrays.copyOfRange(words,i,words.length));
-        String[] constraintElements = constraints.split("and");
 
-                //ok boi ez nem megy s kesz. vegig kell jarni emrt a stringek belsejeben lehet and szoval nem lehet and szerint splitelni na whatever
+        //=====================================================================
+        //          ITT KELL A SZETSZEDESE AZ EGESZNEK
+            ArrayList<Pair> joins = new ArrayList<>();
+            ArrayList<Pair> constraints = new ArrayList<>();    // a constraints nem pairs hanem Constraint lesz
+            ArrayList<Field> selected = new ArrayList<>();
+
+            selected.add(new Field("Tabla1", "nev"));
+            //joins.add(new Pair();
+
+        //=====================================================================
+
+        Table result = new Table( selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
+
 
     }
 
@@ -336,8 +346,7 @@ public class Controller {
             DatabaseEntry foundKey = new DatabaseEntry();
             DatabaseEntry foundData = new DatabaseEntry();
 
-            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) ==
-                    OperationStatus.SUCCESS) {
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
 
                 String keyString = new String(foundKey.getData(), "UTF-8");
 

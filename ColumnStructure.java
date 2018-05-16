@@ -153,4 +153,8 @@ public class ColumnStructure {
     public void setHasIndex(boolean hasIndex) {
         this.hasIndex = hasIndex;
     }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        isPrimaryKey = primaryKey;
+    }
 }
