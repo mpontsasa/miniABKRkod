@@ -30,7 +30,12 @@ public class Main {
             }
             else {
                 controller.parseSQL("use szia");
+<<<<<<< HEAD
                 controller.parseSQL("select a a a frOm");
+=======
+                controller.parseSQL("select a a a frOm szia egy ketto where hello=\"szeerusz fiuu\" and azigen=5 and jojo=99");
+
+>>>>>>> 6a483e64120b41e22401d9cfa7f7004857b12417
             }
 
 

@@ -319,6 +319,7 @@ public class Controller {
             selectionTables.add(words[i]);
         }
 
+
         //=====================================================================
         //          ITT KELL A SZETSZEDESE AZ EGESZNEK
             ArrayList<Pair> joins = new ArrayList<>();
@@ -331,6 +332,7 @@ public class Controller {
         //=====================================================================
 
         Table result = new Table( selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
+
 
     }
 
