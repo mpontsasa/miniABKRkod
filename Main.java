@@ -31,7 +31,6 @@ public class Main {
             else {
                 controller.parseSQL("use szia");
                 controller.parseSQL("select a a a frOm");
-
             }
 
 
@@ -71,7 +70,7 @@ public class Main {
 
             //int a = Integer.parseInt("szia");
 
-            controller.getActiveEnviornment().printTables();
+            //controller.getActiveEnviornment().printTables();
             //System.out.println("Elso command vege");
             //controller.parseSQL("Create Table Table1");
             //controller.parseSQL("Create Table Table2");
