@@ -14,7 +14,7 @@ public class Table {
     {
         //......................................beallitom az elso tablanak
         structure = sqlDatabaseStructure.findTable(selected.get(0).getTableName());
-
+        data = new ArrayList<>();
         try
         {
             Cursor cursor = null;
@@ -35,35 +35,37 @@ public class Table {
             e.printStackTrace();
         }
 
-        for(ColumnStructure cs : structure.getColumns())
+        for(int i = 0; i < structure.getColumns().size(); i++)
         {
+            ColumnStructure cs = structure.getColumns().get(i);
             boolean need = false;
             for(Field f : selected)
             {
-                if (cs.getName() == f.getFieldName() && selected.get(0).getTableName() == f.getTableName())
+                if (cs.getName().equals(f.getFieldName()) && selected.get(0).getTableName().equals(f.getTableName()))
                     need = true;
             }
 
             for (Pair p : joins)
             {
-                if (cs.getName() == p.getFirst().getFieldName() && selected.get(0).getTableName() == p.getFirst().getTableName())
+                if (cs.getName().equals(p.getFirst().getFieldName()) && selected.get(0).getTableName().equals(p.getFirst().getTableName()))
                     need = true;
 
-                if (cs.getName() == p.getSecond().getFieldName() && selected.get(0).getTableName() == p.getSecond().getTableName())
+                if (cs.getName().equals(p.getSecond().getFieldName()) && selected.get(0).getTableName().equals(p.getSecond().getTableName()))
                     need = true;
 
             }
 
-            if (need == false)
+            if (!need)
             {
                 removeColumn(cs.getName());
+                i--;
             }
         }
 
         //........................eddig benne van az elso mezohoz tartozo tabla Constraint szerint szurve
 
 
-        structure.printHeader();
+        print();
 
     }
 
@@ -82,7 +84,6 @@ public class Table {
         data = new ArrayList<>();
         data.add(onlyRecord);
     }
-
 
     public int getIndexOfColumn(String columnName){
 
@@ -107,20 +108,20 @@ public class Table {
         String keyString = new String(keyEntry.getData());
         String dataString = new String(dataEntry.getData());
 
-        System.out.println("key:" + keyString + "\ndata:" + dataString);
+        //System.out.println("key:" + keyString + "\ndataRecord:" + dataString);
 
         int keyIndex = structure.getKeyIndex();
 
-        String[] data  = dataString.split(Finals.DATA_DELIMITER);
+        String[] dataRecord  = dataString.split(Finals.DATA_DELIMITER);
 
-        String[] result = new String[data.length + 1];
+        String[] result = new String[dataRecord.length + 1];
 
         int i = 0;
         for ( i = 0; i < keyIndex; i++){
-            result[i] = data[i];
+            result[i] = dataRecord[i];
         }
         result[i] = keyString;i++;
-        System.arraycopy(data, i - 1, result, i, result.length - i);
+        System.arraycopy(dataRecord, i - 1, result, i, result.length - i);
 
         this.data.add(result);
     }
@@ -155,19 +156,33 @@ public class Table {
             e.printStackTrace();
         }
 
-        for (String[] record : data)
+        for (int j = 0; j < data.size(); j++)
         {
+            String[] record = data.get(j);
             for (int i = index; i < record.length - 1; i++)
             {
                 record[i] = record[i + 1];
             }
-            record = Arrays.copyOf(record, record.length-1);
+            //data.get(j) = Arrays.copyOf(record, record.length-1);
+            data.set(j, Arrays.copyOfRange(data.get(j), 0, data.get(j).length -1));
         }
     }
 
     public void print()
     {
         structure.printHeader();
+
+        for (String[] record : data)
+        {
+            String toPrint = "";
+            for (String field : record)
+            {
+                toPrint += field + "\t";
+            }
+
+            System.out.println(toPrint);
+        }
+
     }
 
     public byte[] getValueBytes(int recordIndex) {

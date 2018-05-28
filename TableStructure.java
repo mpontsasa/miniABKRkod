@@ -74,10 +74,12 @@ public class TableStructure {
 
     public  void printHeader()
     {
+        String toPrint = "";
         for (ColumnStructure cs : columns)
         {
-            System.out.println(cs.getName() + "\t");
+            toPrint += cs.getName() + "\t";
         }
+        System.out.println(toPrint);
     }
 
     public JSONObject toJson(){
