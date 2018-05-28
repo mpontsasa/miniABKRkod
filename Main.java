@@ -1,14 +1,28 @@
 import com.sleepycat.je.Environment;
 
 import java.awt.image.renderable.ContextualRenderedImageFactory;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class Main {
 
+    public static void userInterraction(Controller controller){
+
+        System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table sca mentes adatbázis kezelő rendszerébe!");
+
+        Scanner scanner = new Scanner(System.in);
+        String userCommand = "";
+        while (!(userCommand = scanner.nextLine()).equalsIgnoreCase("exit")) {
+
+            try {
+                controller.parseSQL(userCommand);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void main(String[] args){
+
 
         Controller controller = new Controller();
         try
@@ -30,7 +44,9 @@ public class Main {
             }
             else {
                 controller.parseSQL("use szia");
-                controller.parseSQL("select a a a frOm szia egy ketto where hello=\"szeerusz fiuu\" and azigen=5 and jojo=99");
+                controller.parseSQL(
+                        "select a.oi b.csa   c.brah frOm szia egy ketto where a.hello=\"szeerusz fiuu\" , b.azigen=5 ," +
+                                " c.jojo=99, a.oi =  b.oi");
 
             }
 

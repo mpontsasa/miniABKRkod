@@ -10,7 +10,7 @@ public class Table {
     private TableStructure structure;
     private ArrayList<String[]> data;
 
-    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<Pair> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment)// a constraints nem pairs hanem Constraint lesz
+    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment)// a constraints nem pairs hanem Constraint lesz
     {
         //......................................beallitom az elso tablanak
         structure = sqlDatabaseStructure.findTable(selected.get(0).getTableName());
