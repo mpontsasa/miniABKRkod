@@ -1,3 +1,5 @@
+import com.sleepycat.je.DatabaseEntry;
+
 public class SelectConstraint {
 
     private Field firstField;
@@ -28,5 +30,32 @@ public class SelectConstraint {
 
     public String getSecondField() {
         return secondField;
+    }
+
+    public boolean checkConstrant(TableStructure ts, DatabaseEntry key, DatabaseEntry data)
+    {
+        Table temp = new Table(ts);
+        temp.addRecord(key, data);
+
+        if (!firstField.getTableName().equals(ts.getName()))
+            return true;
+
+        if (operand.equals(Finals.EQUALS_OPERATOR))
+        {
+            if (temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())].equals(secondField))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            //other operators
+            return false;
+        }
+
     }
 }

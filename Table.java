@@ -25,8 +25,17 @@ public class Table {
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
 
-
-                this.addRecord(foundKey, foundData);
+                boolean isOk = true;
+                for (SelectConstraint sc : constraints)
+                {
+                    if (sc.checkConstrant(sqlDatabaseStructure.findTable(selected.get(0).getTableName()), foundKey, foundData))
+                    {
+                        isOk = false;
+                        break;
+                    }
+                }
+                if(isOk)
+                    this.addRecord(foundKey, foundData);
             }
             activeEnviornment.closeCursor(cursor);
         }

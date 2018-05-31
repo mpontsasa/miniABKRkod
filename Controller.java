@@ -143,7 +143,6 @@ public class Controller {
         }
         //System.out.println(command);
 
-
         return result;
 
     }
