@@ -27,15 +27,19 @@ public class Main {
                 controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas77\",20, 77, \"ghetto masters\", 8547)");
 
                 controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
+
+                controller.parseSQL("create table Tabla2 (alma string primary, korte string, dbszam int)");
+                controller.parseSQL("insert into Tabla2 values (\"ElsoAlma\", \"barca\", 60)");
+                controller.parseSQL("insert into Tabla2 values (\"MasodikAlma\", \"ghetto masters\", 20)");
+
+                controller.parseSQL("create table Tabla3 (szo string, szam int primary)");
+                controller.parseSQL("insert into Tabla3 values (\"T3/1sz=60\", 60)");
+                controller.parseSQL("insert into Tabla3 values (\"T3/2sz=20\", 20)");
+
             }
             else {
                 controller.parseSQL("use szia");
-<<<<<<< HEAD
-                controller.parseSQL("select a a a frOm");
-=======
-                controller.parseSQL("select a a a frOm szia egy ketto where hello=\"szeerusz fiuu\" and azigen=5 and jojo=99");
-
->>>>>>> 6a483e64120b41e22401d9cfa7f7004857b12417
+                controller.parseSQL("select a from a");
             }
 
 

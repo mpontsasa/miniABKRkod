@@ -4,7 +4,7 @@ import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
 
 import java.io.File;
-import java.lang.module.InvalidModuleDescriptorException;
+//import java.lang.module.InvalidModuleDescriptorException;
 import java.lang.reflect.Array;
 import java.nio.channels.SelectableChannel;
 import java.nio.file.Files;
@@ -17,8 +17,8 @@ import java.util.List;
 public class Controller {
 
     private UserLayer userLayer = null;
-    private SQLDatabaseStructure sqlDatabaseStructure = null;  //structure of active database
-    private ActiveEnviornment activeEnviornment = new ActiveEnviornment();
+    public static SQLDatabaseStructure sqlDatabaseStructure = null;  //structure of active database
+    public static ActiveEnviornment activeEnviornment = new ActiveEnviornment();
 
     public Controller() {
 
@@ -326,13 +326,23 @@ public class Controller {
             ArrayList<Pair> constraints = new ArrayList<>();    // a constraints nem pairs hanem Constraint lesz
             ArrayList<Field> selected = new ArrayList<>();
 
+            selected.add(new Field("Tabla2", "alma"));
+            selected.add(new Field("Tabla2", "korte"));
+
             selected.add(new Field("Tabla1", "nev"));
-            //joins.add(new Pair();
+            selected.add(new Field("Tabla1", "kor"));
+
+            selected.add(new Field("Tabla3", "szo"));
+
+        /*selected.add(new Field("Tabla1", "id"));*/
+            joins.add(new Pair(new Field("Tabla1", "kor"), new Field("Tabla2", "dbszam")));
+            joins.add(new Pair(new Field("Tabla1", "id"), new Field("Tabla3", "szam")));
 
         //=====================================================================
 
         Table result = new Table( selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
 
+        result.print();
 
     }
 

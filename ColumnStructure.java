@@ -9,6 +9,8 @@ public class ColumnStructure {
     private String type;//from Finals
     private boolean hasIndex;
 
+    private String originalTable = null;   // just for join
+
 
     //EZEKET UGY GONDOLTAM JO OTLET MEGIRNI DE CSAK AZ UTOLSOT SZERETNEM HASZNALNI VEHHULIS
 //    public ColumnStructure(String name, String type) {
@@ -156,5 +158,13 @@ public class ColumnStructure {
 
     public void setPrimaryKey(boolean primaryKey) {
         isPrimaryKey = primaryKey;
+    }
+
+    public String getOriginalTable() {
+        return originalTable;
+    }
+
+    public void setOriginalTable(String originalTable) {
+        this.originalTable = originalTable;
     }
 }

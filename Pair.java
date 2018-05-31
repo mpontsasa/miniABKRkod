@@ -28,4 +28,11 @@ public class Pair {
     public void setSecond(Field second) {
         this.second = second;
     }
+
+    public void swap()
+    {
+        Field temp = first;
+        first = second;
+        second = temp;
+    }
 }

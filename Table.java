@@ -10,7 +10,7 @@ public class Table {
     private TableStructure structure;
     private ArrayList<String[]> data;
 
-    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<Pair> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment)// a constraints nem pairs hanem Constraint lesz
+    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<Pair> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment) throws Exception    // a constraints nem pairs hanem Constraint lesz
     {
         //......................................beallitom az elso tablanak
         structure = sqlDatabaseStructure.findTable(selected.get(0).getTableName());
@@ -25,7 +25,7 @@ public class Table {
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
 
-                //IDE KELL A CONSTRAINT ELLENORZESE
+
                 this.addRecord(foundKey, foundData);
             }
             activeEnviornment.closeCursor(cursor);
@@ -60,13 +60,60 @@ public class Table {
                 removeColumn(cs.getName());
                 i--;
             }
+            else
+            {
+                cs.setOriginalTable(selected.get(0).getTableName());
+            }
         }
+
 
         //........................eddig benne van az elso mezohoz tartozo tabla Constraint szerint szurve
 
+        for (int i = 0; i < joins.size();)
+        {
+            int joinIndex = findNextJoin(joins);
+            if (joinIndex == -1)
+                throw new InvalidSQLCommandException("Tables joined inproperly.");
 
-        print();
+            Pair p = joins.get(joinIndex);
+            joins.remove(joinIndex);
 
+            hashJoin(p, sqlDatabaseStructure);
+
+            for(int j = 0; j < structure.getColumns().size(); j++)
+            {
+                ColumnStructure cs = structure.getColumns().get(j);
+                boolean need = false;
+
+                if(cs.getOriginalTable() == null)
+                {
+                    cs.setOriginalTable(p.second.getTableName());
+                }
+
+                for(Field f : selected)
+                {
+                    if (cs.getName().equals(f.getFieldName()) && cs.getOriginalTable().equals(f.getTableName()))
+                        need = true;
+                }
+
+                for (Pair pp : joins)
+                {
+                    if (cs.getName().equals(pp.getFirst().getFieldName()) && cs.getOriginalTable().equals(pp.getFirst().getTableName()))
+                        need = true;
+
+                    if (cs.getName().equals(pp.getSecond().getFieldName()) && cs.getOriginalTable().equals(pp.getSecond().getTableName()))
+                        need = true;
+
+                }
+
+                if (!need)
+                {
+                    removeColumn(cs.getName());
+                    j--;
+                }
+            }
+
+        }
     }
 
     public Table(TableStructure structure) {
@@ -83,6 +130,109 @@ public class Table {
         this.structure = structure;
         data = new ArrayList<>();
         data.add(onlyRecord);
+    }
+
+    public int findNextJoin(ArrayList<Pair> joins)
+    {
+        for (int i = 0; i < joins.size(); i++)
+        {
+            if (getIndexOfColumn(joins.get(i).getFirst().getFieldName()) != -1)
+                return i;
+
+            if (getIndexOfColumn(joins.get(i).getSecond().getFieldName()) != -1)
+            {
+                joins.get(i).swap();
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public void hashJoin(Pair p, SQLDatabaseStructure sqlDatabaseStructure)
+    {
+
+        ArrayList<Integer>[] firstHashes = new ArrayList[Finals.NR_OF_HASHES];
+
+
+        for (int i = 0; i < Finals.NR_OF_HASHES; i++)
+        {
+            firstHashes[i] = new ArrayList<>();
+        }
+
+        //................................hash this table by p.first field
+
+        int firstJoinIndex = structure.getIndexOfColumn(p.getFirst().getFieldName());
+
+        for (int i = 0; i < data.size(); i++)
+        {
+            firstHashes[hash(data.get(i)[firstJoinIndex])].add(i);
+        }
+
+        //.................................hash second table by p.second field and match with first hashes
+
+        ArrayList<String[]> newData = new ArrayList<>();
+
+        try
+        {
+            Cursor cursor = null;
+            cursor = Controller.activeEnviornment.getCursor(p.getSecond().getTableName());
+
+            DatabaseEntry foundKey = new DatabaseEntry();
+            DatabaseEntry foundData = new DatabaseEntry();
+
+            int i = 0;  //index of record
+            int secondJoinIndex = Controller.sqlDatabaseStructure.findTable(p.getSecond().getTableName()).getIndexOfColumn(p.getSecond().getFieldName());
+
+            while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
+                Table tempTable = new Table(Controller.sqlDatabaseStructure.findTable(p.getSecond().getTableName()));
+                tempTable.addRecord(foundKey, foundData);
+
+                int kat = hash(tempTable.getData().get(0)[secondJoinIndex]);
+
+                for (int first = 0; first < firstHashes[kat].size(); first++)    // vegigmegyunk a kategoria elemein az elso tombbol
+                {
+                        if (data.get(firstHashes[kat].get(first))[firstJoinIndex].equals(tempTable.getData().get(0)[secondJoinIndex]))
+                        {
+                            String[] record = mergeRecord(data.get(firstHashes[kat].get(first)), tempTable.getData().get(0));
+                            newData.add(record);
+                        }
+                }
+
+                i++;
+            }
+            Controller.activeEnviornment.closeCursor(cursor);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        structure.mergeWith(sqlDatabaseStructure.findTable(p.getSecond().getTableName()));
+        data = newData;
+    }
+
+    public String[] mergeRecord(String[] first, String[] second)
+    {
+        String[] res = new String[first.length + second.length];
+
+        for (int i = 0; i < first.length; i++)
+            res[i] = first[i];
+
+        for (int i = 0; i < second.length; i++)
+            res[i + first.length] = second[i];
+
+        return res;
+    }
+
+    public int hash(String str)
+    {
+        int hash = 7;
+        for (int i = 0; i < str.length(); i++) {
+            hash = (hash*31 + str.charAt(i)) % 7727;
+        }
+
+        return hash % Finals.NR_OF_HASHES;
     }
 
     public int getIndexOfColumn(String columnName){
@@ -269,5 +419,13 @@ public class Table {
 
     public ColumnStructure getColumnStructure(int index){
         return structure.getColumnStructure(index);
+    }
+
+    public ArrayList<String[]> getData() {
+        return data;
+    }
+
+    public void setData(ArrayList<String[]> data) {
+        this.data = data;
     }
 }

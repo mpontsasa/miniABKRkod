@@ -113,6 +113,15 @@ public class TableStructure {
         }
     }
 
+    public void mergeWith(TableStructure addTable)
+    {
+        for (int i = 0; i < addTable.getColumns().size(); i++)
+        {
+            addTable.getColumns().get(i).setOriginalTable(addTable.getName());
+            columns.add(addTable.getColumns().get(i));
+        }
+    }
+
     public String getName() {
         return name;
     }

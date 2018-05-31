@@ -4,6 +4,7 @@ public class Finals {
     public static final String INT_TYPE = "int";
     public static final String STRING_TYPE = "string";
 
+    public static final int NR_OF_HASHES = 15;
 
     public static final String IS_PRIMARY_TO_STRING = "IS_PRIMARY";
     public static final String IS_FOREIGN_TO_STRING = "IS_FOREIGN";
