@@ -7,7 +7,7 @@ public class Main {
 
     public static void userInterraction(Controller controller) throws Exception {
 
-        System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table sca mentes adatbázis kezelő rendszerébe!");
+        System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table scan mentes adatbázis kezelő rendszerébe!");
 
         controller.parseSQL("use szia");
         controller.getActiveEnviornment().printTables();
