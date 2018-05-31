@@ -26,7 +26,14 @@ public class Controller {
 
     public void parseSQL(String commandSQL) throws Exception{
 
+        commandSQL = commandSQL.replaceAll("\\s+"," ");
+
         String words[] = commandSQL.split(" ");
+//
+//        if(words.length >= 9){
+//            System.out.println(words[9]);
+//            System.out.println(words[10]);
+//        }
 
         if(words.length < 2)
         {
@@ -322,11 +329,86 @@ public class Controller {
 
         //=====================================================================
         //          ITT KELL A SZETSZEDESE AZ EGESZNEK
-            ArrayList<Pair> joins = new ArrayList<>();
-            ArrayList<Pair> constraints = new ArrayList<>();    // a constraints nem pairs hanem Constraint lesz
-            ArrayList<Field> selected = new ArrayList<>();
+        ArrayList<Pair> joins = new ArrayList<>();
+        ArrayList<SelectConstraint> constraints = new ArrayList<>();    // a constraints nem pairs hanem Constraint lesz
+        ArrayList<Field> selected = new ArrayList<>();
 
-            selected.add(new Field("Tabla2", "alma"));
+
+        //selected felepitese
+        for(String s : selectedFields){
+            if(!s.contains(".")){
+                throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+            }
+            else {
+                selected.add(new Field(s));
+            }
+        }
+
+        //constraint es join parseolas
+        StringBuilder tempSB = new StringBuilder();
+        for(i++; i < words.length;i++)
+        {
+            tempSB.append(words[i]);
+            tempSB.append(" ");
+        }
+        String rem = tempSB.toString();
+        rem = rem.replaceAll(" ", "");
+        String[] remainder = rem.split("");
+        i = 0;
+        while (i < remainder.length){
+            tempSB.setLength(0);
+
+            while(
+                    (!remainder[i].equals(Finals.EQUALS_OPERATOR)) &&
+                    (!remainder[i].equals(Finals.LESS_THAN_OPERATOR)) &&
+                    (!remainder[i].equals(Finals.GREATER_THAN_OPERATOR))){
+
+                tempSB.append(remainder[i]);
+                i++;
+            }
+            String firstField = tempSB.toString();
+            if(!firstField.contains(".")){
+                throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+            }
+            String op;
+            String secondField;
+            if(remainder[i].equals(Finals.GREATER_THAN_OPERATOR)){
+                if(remainder[i + 1].equals(Finals.EQUALS_OPERATOR)){
+                    //>= eset
+                    op = Finals.GREATER_THAN_OR_EQUAL_OPERATOR;
+                    i += 2;
+                }
+                else {
+                    //> eset
+                    op = Finals.GREATER_THAN_OPERATOR;
+                    i++;
+                }
+            }
+            else{
+                if(remainder[i].equals(Finals.LESS_THAN_OPERATOR)){
+                    if(remainder[i + 1].equals(Finals.EQUALS_OPERATOR)){
+                        //<= eset
+                        op = Finals.LESS_THAN_OR_EQUAL_OPERATOR;
+                        i += 2;
+                    }
+                    else {
+                        //< eset
+                        op = Finals.LESS_THAN_OPERATOR;
+                        i++;
+                    }
+                }
+                else {
+                    //= eset
+                    op = Finals.EQUALS_OPERATOR;
+                    i++;
+                }
+            }
+
+            System.out.print(firstField + " " + op);
+            //MOST JON AZ EGYENLO UTANI RESZ LEKEZELESE
+
+
+           /*selected.add(new Field("Tabla2", "alma"));
             selected.add(new Field("Tabla2", "korte"));
 
             selected.add(new Field("Tabla1", "nev"));
@@ -334,16 +416,72 @@ public class Controller {
 
             selected.add(new Field("Tabla3", "szo"));
 
-        /*selected.add(new Field("Tabla1", "id"));*/
             joins.add(new Pair(new Field("Tabla1", "kor"), new Field("Tabla2", "dbszam")));
             joins.add(new Pair(new Field("Tabla1", "id"), new Field("Tabla3", "szam")));
+*/
+            if(remainder[i].equals("\"")){
+                //egyenloseget nezunk egy STRINGRE time
+                tempSB.setLength(0);
+                i++;
+                while(!remainder[i].equals("\"")){
+                    tempSB.append(remainder[i]);
+                    i++;
+                }
+                secondField = tempSB.toString();
+                constraints.add(new SelectConstraint(firstField,op,secondField));
+                i+= 2;//atugrok a vesszo utanig
+
+
+            }
+            else if(isANumber(remainder[i])){
+                //egyenloseget nezunk egy SZAMRA time
+                tempSB.setLength(0);
+                while (i < remainder.length && isANumber(remainder[i])){
+                    tempSB.append(remainder[i]);
+                    i++;
+                }
+                secondField = tempSB.toString();
+                constraints.add(new SelectConstraint(firstField,op,secondField));
+                i++;
+            }
+            else {
+                //JOIN feltetel masodik elemenek feldolgozasa time
+                tempSB.setLength(0);
+                while (i < remainder.length && !remainder[i].equals(Finals.AND_SYNTAX)){
+                    tempSB.append(remainder[i]);
+                    i++;
+                }
+                secondField = tempSB.toString();
+                if(!secondField.contains(".")){
+                    throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+                }
+                joins.add(new Pair(firstField,secondField));
+                i++;
+
+            }
+            System.out.println(secondField);
+
+        }
 
         //=====================================================================
 
         Table result = new Table( selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
 
-        result.print();
 
+        result.print();
+    }
+
+
+
+    private boolean isANumber(String candidate){
+
+        try{
+            Integer.parseInt(candidate);
+        }
+        catch (NumberFormatException e){
+            return false;
+        }
+        return true;
     }
 
     public boolean checkPrimaryKeyConstraintOnInsert(String tableName, String value){

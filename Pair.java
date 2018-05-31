@@ -3,6 +3,14 @@ public class Pair {
     Field first;
     Field second;
 
+    public  Pair(String f, String s){
+
+
+        this.first = new Field(f);
+
+        this.second = new Field(s);
+    }
+
     public Pair(Field first, Field second) {
         this.first = first;
         this.second = second;

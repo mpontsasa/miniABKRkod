@@ -32,6 +32,12 @@ public class Finals {
     public final static String INDEX_FILE_NAME = "Index_";
     public final static String INDEX_DATA_SEPARATOR = "@";
 
+    public final static String EQUALS_OPERATOR = "=";
+    public final static String LESS_THAN_OPERATOR = "<";
+    public final static String GREATER_THAN_OPERATOR = ">";
+    public final static String LESS_THAN_OR_EQUAL_OPERATOR = "<=";
+    public final static String GREATER_THAN_OR_EQUAL_OPERATOR = ">=";
+    public final static String AND_SYNTAX = ",";
 
 
 }
