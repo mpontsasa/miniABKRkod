@@ -9,6 +9,11 @@ public class Main {
 
         System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table scan mentes adatbázis kezelő rendszerébe!");
 
+        System.out.println("Adatbázisaink:");
+        controller.printDatabases();
+
+
+        System.out.println("A szia adatbázis táblái(éppen a szia adatbázist használod):");
         controller.parseSQL("use szia");
         controller.getActiveEnviornment().printTables();
 

@@ -724,4 +724,17 @@ public class Controller {
         return activeEnviornment;
 
     }
+
+    public void printDatabases() {
+        final File folder = new File("Enviornments");
+
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                System.out.println(fileEntry.getName());
+            }
+        }
+    }
+
+
+
 }
