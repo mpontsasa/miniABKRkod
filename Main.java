@@ -5,9 +5,12 @@ import java.util.*;
 
 public class Main {
 
-    public static void userInterraction(Controller controller){
+    public static void userInterraction(Controller controller) throws Exception {
 
         System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table sca mentes adatbázis kezelő rendszerébe!");
+
+        controller.parseSQL("use szia");
+        controller.getActiveEnviornment().printTables();
 
         Scanner scanner = new Scanner(System.in);
         String userCommand = "";
@@ -16,7 +19,7 @@ public class Main {
             try {
                 controller.parseSQL(userCommand);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Ez a parancs hibas :(...");
             }
         }
     }
@@ -50,11 +53,15 @@ public class Main {
                 controller.parseSQL("insert into Tabla3 values (\"T3/1sz=60\", 60)");
                 controller.parseSQL("insert into Tabla3 values (\"T3/2sz=20\", 20)");
 
+
+
             }
             else {
+                userInterraction(controller);
+                /*
                 controller.parseSQL("use szia");
                 controller.parseSQL("select Tabla1.nev from Tabla1");
-
+*/
                 /*controller.parseSQL(
                         "select a.oi b.csa   c.brah frOm szia egy ketto where a.hello=\"szeerusz fiuu\" , b.azigen=5 ," +
                                 " c.jojo=99, a.oi =  b.oi");*/
@@ -109,8 +116,9 @@ public class Main {
         }
         catch (InvalidSQLCommandException isqlce)
         {
-            isqlce.printStackTrace();
-            System.out.println(isqlce.msg);
+            //isqlce.printStackTrace();
+            //System.out.println(isqlce.msg);
+            System.out.println("Ez a parancs hibas :(..");
         }
         catch(Exception e)
         {
