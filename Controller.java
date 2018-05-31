@@ -24,9 +24,9 @@ public class Controller {
 
     }
 
-    public void parseSQL(String commandSQL) throws Exception{
+    public void parseSQL(String commandSQL) throws Exception {
 
-        commandSQL = commandSQL.replaceAll("\\s+"," ");
+        commandSQL = commandSQL.replaceAll("\\s+", " ");
 
         String words[] = commandSQL.split(" ");
 //
@@ -35,32 +35,27 @@ public class Controller {
 //            System.out.println(words[10]);
 //        }
 
-        if(words.length < 2)
-        {
+        if (words.length < 2) {
             throw new InvalidSQLCommandException("Too short command.");
         }
 
-        switch(words[0].toUpperCase())
-        {
+        switch (words[0].toUpperCase()) {
             case "USE":
                 useDatabaseCommand(words);
                 break;
             case "CREATE":
-                if (words[1].equalsIgnoreCase("DATABASE")){
+                if (words[1].equalsIgnoreCase("DATABASE")) {
                     createDatabaseCommand(words);
-                }
-                else if(words[1].equalsIgnoreCase("TABLE")){
+                } else if (words[1].equalsIgnoreCase("TABLE")) {
                     createTableCommand(words);
-                }
-                else if(words[1].equalsIgnoreCase("INDEX")){
+                } else if (words[1].equalsIgnoreCase("INDEX")) {
                     createIndexCommand(words);
                 }
                 break;
             case "DROP":
-                if (words[1].equalsIgnoreCase("DATABASE")){
+                if (words[1].equalsIgnoreCase("DATABASE")) {
                     dropDatabaseCommand(words);
-                }
-                else if(words[1].equalsIgnoreCase("TABLE")){
+                } else if (words[1].equalsIgnoreCase("TABLE")) {
                     dropTableCommand(words);
                 }
                 break;
@@ -73,23 +68,23 @@ public class Controller {
         }
     }
 
-    public void useDatabaseCommand(String[] words) throws InvalidSQLCommandException{
-        if (words.length != 2){
+    public void useDatabaseCommand(String[] words) throws InvalidSQLCommandException {
+        if (words.length != 2) {
             throw new InvalidSQLCommandException("Too much words after USE.");
         }
-        try{
-            activeEnviornment.setUpActiveEnviornment(words[1],false);
+        try {
+            activeEnviornment.setUpActiveEnviornment(words[1], false);
 
             sqlDatabaseStructure = new SQLDatabaseStructure(words[1]);
             JsonIOMaster io = new JsonIOMaster(sqlDatabaseStructure);
             io.readDBFromFile();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void createDatabaseCommand(String[] words) throws Exception {
-        if (words.length != 3){
+        if (words.length != 3) {
             throw new InvalidSQLCommandException("Insuficient length.");
         }
 
@@ -97,45 +92,44 @@ public class Controller {
             throw new InvalidSQLCommandException("Database " + words[2] + " alredy exists");
         }
 
-        try{
-            activeEnviornment.setUpActiveEnviornment(words[2],true);
+        try {
+            activeEnviornment.setUpActiveEnviornment(words[2], true);
 
             sqlDatabaseStructure = new SQLDatabaseStructure(words[2]);
             sqlDatabaseStructure.toJson();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private ArrayList<ColumnStructure> parseCreateTableCommand(String[] words) throws InvalidSQLCommandException{
+    private ArrayList<ColumnStructure> parseCreateTableCommand(String[] words) throws InvalidSQLCommandException {
 
         ArrayList<ColumnStructure> result = new ArrayList<>();
 
         String command = String.join(" ", words);
-        command = command.substring(command.indexOf("(") + 1 , command.indexOf(")"));
+        command = command.substring(command.indexOf("(") + 1, command.indexOf(")"));
         //System.out.println("got the command:" + command);
-        command = command.trim().replaceAll(" +"," ");//remove extra spaces
+        command = command.trim().replaceAll(" +", " ");//remove extra spaces
         command = command.replaceAll("^ +", "");//more space removel at end and beggining of string, probably not necessary
         command = command.replaceAll(" +$", "");
         command = command.replaceAll(", +", ",");//remove spaces ner commas
         command = command.replaceAll(" +,", ",");
         String[] fieldsCommands = command.split(",");
 
-        for(String fieldCommand : fieldsCommands){
+        for (String fieldCommand : fieldsCommands) {
             String[] fieldCommandParts = fieldCommand.split(" ");
             List<String> fcpList = Arrays.asList(fieldCommandParts);
             String name = fieldCommandParts[0];
             String type = fieldCommandParts[1];
-            if((!type.equals(Finals.INT_TYPE)) && (!type.equals(Finals.STRING_TYPE))){
+            if ((!type.equals(Finals.INT_TYPE)) && (!type.equals(Finals.STRING_TYPE))) {
                 throw new InvalidSQLCommandException("Wrong type!");
             }
             boolean primary = fcpList.contains("primary");
             boolean foreign = fcpList.contains("references");
             boolean unique = fcpList.contains("unique");
             String reference = null;
-            if(foreign)
-            {
+            if (foreign) {
                 reference = fcpList.get(fcpList.indexOf("references") + 1);
             }
 
@@ -147,64 +141,60 @@ public class Controller {
 
     }
 
-    public void createTableCommand(String[] words)throws Exception{
+    public void createTableCommand(String[] words) throws Exception {
 
-        if(sqlDatabaseStructure.hasTable(words[2])){
+        if (sqlDatabaseStructure.hasTable(words[2])) {
             throw new InvalidSQLCommandException("Table already exists!(Create table error)");
         }
 
-        if (!activeEnviornment.isSetUp())
-        {
+        if (!activeEnviornment.isSetUp()) {
             throw new InvalidSQLCommandException("No database selected");
         }
 
         activeEnviornment.createDB(words[2]);
 
-        TableStructure tableStructure = new TableStructure(words[2],parseCreateTableCommand(words));
+        TableStructure tableStructure = new TableStructure(words[2], parseCreateTableCommand(words));
         sqlDatabaseStructure.addTable(tableStructure);
 
 
-        for(String columnName : tableStructure.getUniqueColumnNames()){
-            makeIndexFile(tableStructure.getName(),columnName);
+        for (String columnName : tableStructure.getUniqueColumnNames()) {
+            makeIndexFile(tableStructure.getName(), columnName);
         }
 
-        for(String columnName : tableStructure.getForeignColumnNames()){
-            makeIndexFile(tableStructure.getName(),columnName);
+        for (String columnName : tableStructure.getForeignColumnNames()) {
+            makeIndexFile(tableStructure.getName(), columnName);
         }
 
         sqlDatabaseStructure.toJson();
     }
 
-    public void dropDatabaseCommand(String[] words)throws Exception{
-        if (words.length != 3){
+    public void dropDatabaseCommand(String[] words) throws Exception {
+        if (words.length != 3) {
             throw new InvalidSQLCommandException("Insuficient length.");
         }
 
-        if (!deleteDirectory(new File(Finals.ENVIORNMENT_PATH + words[2])))
-        {
+        if (!deleteDirectory(new File(Finals.ENVIORNMENT_PATH + words[2]))) {
             throw new InvalidSQLCommandException("Cant delete Database(probobly dosent exist)");
         }
 
         activeEnviornment = null;
 
         ///MEG KELL: szerkezet torlese
-        if(!deleteDirectory(new File(words[2] + ".json")))
-        {
+        if (!deleteDirectory(new File(words[2] + ".json"))) {
             throw new InvalidSQLCommandException("Cant delete Database structure!");
         }
         sqlDatabaseStructure = null;
     }
 
-    public void dropTableCommand(String[] words)throws Exception{
+    public void dropTableCommand(String[] words) throws Exception {
 
         System.out.println("Drop Table " + words[2]);
 
-        if (words.length != 3){
+        if (words.length != 3) {
             throw new InvalidSQLCommandException("Insuficient length.");
         }
 
-        if (!activeEnviornment.isSetUp())
-        {
+        if (!activeEnviornment.isSetUp()) {
             throw new InvalidSQLCommandException("No database selected");
         }
 
@@ -213,26 +203,22 @@ public class Controller {
         sqlDatabaseStructure.toJson();
     }
 
-    private void updateIndexes(String tableName, String[] values)
-    {
-        try
-        {
+    private void updateIndexes(String tableName, String[] values) {
+        try {
             Table tempTable = new Table(sqlDatabaseStructure.findTable(tableName), values);
 
-            for(int i = 0; i < sqlDatabaseStructure.findTable(tableName).getNumberOfColumns(); i++)
-            {
+            for (int i = 0; i < sqlDatabaseStructure.findTable(tableName).getNumberOfColumns(); i++) {
 
                 if (tempTable.getColumnStructure(i).isHasIndex()) {
 
                     String indexFileName = Finals.INDEX_FILE_NAME + tableName + "_" + tempTable.getColumnStructure(i).getName();
-                    String data = activeEnviornment.getValueByKey(indexFileName,values[i]);
+                    String data = activeEnviornment.getValueByKey(indexFileName, values[i]);
                     DatabaseEntry keyEnrty = new DatabaseEntry(values[i].getBytes());
                     DatabaseEntry dataEntry;
                     //ha nincs az index fileban ilyen kulcsu entry, akkor letrehozunk egy ujat, ha van, akkor a vegere fuzzuk az uj adatot
-                    if(data == null){
+                    if (data == null) {
                         dataEntry = new DatabaseEntry((Finals.INDEX_DATA_SEPARATOR + values[tempTable.getStructure().getKeyIndex()]).getBytes());
-                    }
-                    else {
+                    } else {
                         data += (Finals.INDEX_DATA_SEPARATOR + values[tempTable.getStructure().getKeyIndex()]);
                         dataEntry = new DatabaseEntry(data.getBytes());
 
@@ -241,29 +227,24 @@ public class Controller {
 
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void insertIntoCommand(String[] words)throws Exception{
+    public void insertIntoCommand(String[] words) throws Exception {
 
-        if (!activeEnviornment.isSetUp())
-        {
+        if (!activeEnviornment.isSetUp()) {
             throw new InvalidSQLCommandException("No database selected");
         }
 
-        if (!words[1].equalsIgnoreCase("INTO") || !words[3].equalsIgnoreCase("VALUES"))
-        {
+        if (!words[1].equalsIgnoreCase("INTO") || !words[3].equalsIgnoreCase("VALUES")) {
             throw new InvalidSQLCommandException("Unknown command format.");
         }
 
         String[] values = getValuesForInsert(words);
 
-        if (validateValuesForInsert(words[2],  values))
-        {
+        if (validateValuesForInsert(words[2], values)) {
             Table tempTable = new Table(sqlDatabaseStructure.findTable(words[2]), values);
 
             DatabaseEntry theKey = new DatabaseEntry(tempTable.getKeyBytes(0));
@@ -274,22 +255,18 @@ public class Controller {
             //tempTable.addRecord(theKey, theData);//matyi tesztel
 
             activeEnviornment.insertIntoDB(words[2], theKey, theData);
-        }
-        else
-        {
+        } else {
             throw new InvalidSQLCommandException("Incorrect values given.");
         }
     }
 
-    public void createIndexCommand(String[] words)throws Exception{
+    public void createIndexCommand(String[] words) throws Exception {
 
-        if (!activeEnviornment.isSetUp())
-        {
+        if (!activeEnviornment.isSetUp()) {
             throw new InvalidSQLCommandException("No database selected");
         }
 
-        if (!words[3].equalsIgnoreCase("ON"))
-        {
+        if (!words[3].equalsIgnoreCase("ON")) {
             throw new InvalidSQLCommandException("Unknown command format.");
         }
 
@@ -297,11 +274,9 @@ public class Controller {
 
     }
 
-    public void selectCommand(String[] words)throws Exception
-    {
+    public void selectCommand(String[] words) throws Exception {
         // SELECT tabla1.mezo1 tabla2.mezo2 FROM tabla1 tabla2 WHERE tabla1.mezo1=tabla2.mezo2
-        if (!activeEnviornment.isSetUp())
-        {
+        if (!activeEnviornment.isSetUp()) {
             throw new InvalidSQLCommandException("No database selected");
         }
 
@@ -310,18 +285,15 @@ public class Controller {
         ArrayList<String> selectionConstraints = new ArrayList<>();
 
         int i;
-        for (i = 1; i < words.length && !words[i].equalsIgnoreCase("FROM"); i++)
-        {
+        for (i = 1; i < words.length && !words[i].equalsIgnoreCase("FROM"); i++) {
             selectedFields.add(words[i]);
         }
 
-        if (i == words.length)
-        {
+        if (i == words.length) {
             throw new InvalidSQLCommandException("Missing FROM statement");
         }
 
-        for (i++; i < words.length && !words[i].equalsIgnoreCase("WHERE") && !words[i].equalsIgnoreCase("WHERE"); i++)
-        {
+        for (i++; i < words.length && !words[i].equalsIgnoreCase("WHERE") && !words[i].equalsIgnoreCase("WHERE"); i++) {
             selectionTables.add(words[i]);
         }
 
@@ -334,77 +306,74 @@ public class Controller {
 
 
         //selected felepitese
-        for(String s : selectedFields){
-            if(!s.contains(".")){
+        for (String s : selectedFields) {
+            if (!s.contains(".")) {
                 throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
-            }
-            else {
+            } else {
                 selected.add(new Field(s));
             }
         }
 
-        //constraint es join parseolas
-        StringBuilder tempSB = new StringBuilder();
-        for(i++; i < words.length;i++)
-        {
-            tempSB.append(words[i]);
-            tempSB.append(" ");
-        }
-        String rem = tempSB.toString();
-        rem = rem.replaceAll(" ", "");
-        String[] remainder = rem.split("");
-        i = 0;
-        while (i < remainder.length){
-            tempSB.setLength(0);
+        //lekezelem azt az esetet ha mar nincs join, azaz feldolgoztuk az egesz select parancsot
+        if (i != words.length) {
 
-            while(
-                    (!remainder[i].equals(Finals.EQUALS_OPERATOR)) &&
-                    (!remainder[i].equals(Finals.LESS_THAN_OPERATOR)) &&
-                    (!remainder[i].equals(Finals.GREATER_THAN_OPERATOR))){
+            //constraint es join parseolas
+            StringBuilder tempSB = new StringBuilder();
+            for (i++; i < words.length; i++) {
+                tempSB.append(words[i]);
+                tempSB.append(" ");
+            }
+            String rem = tempSB.toString();
+            rem = rem.replaceAll(" ", "");
+            String[] remainder = rem.split("");
+            i = 0;
+            while (i < remainder.length) {
+                tempSB.setLength(0);
 
-                tempSB.append(remainder[i]);
-                i++;
-            }
-            String firstField = tempSB.toString();
-            if(!firstField.contains(".")){
-                throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
-            }
-            String op;
-            String secondField;
-            if(remainder[i].equals(Finals.GREATER_THAN_OPERATOR)){
-                if(remainder[i + 1].equals(Finals.EQUALS_OPERATOR)){
-                    //>= eset
-                    op = Finals.GREATER_THAN_OR_EQUAL_OPERATOR;
-                    i += 2;
-                }
-                else {
-                    //> eset
-                    op = Finals.GREATER_THAN_OPERATOR;
+                while ((i < remainder.length) &&
+                        (!remainder[i].equals(Finals.EQUALS_OPERATOR)) &&
+                        (!remainder[i].equals(Finals.LESS_THAN_OPERATOR)) &&
+                        (!remainder[i].equals(Finals.GREATER_THAN_OPERATOR))) {
+
+                    tempSB.append(remainder[i]);
                     i++;
                 }
-            }
-            else{
-                if(remainder[i].equals(Finals.LESS_THAN_OPERATOR)){
-                    if(remainder[i + 1].equals(Finals.EQUALS_OPERATOR)){
-                        //<= eset
-                        op = Finals.LESS_THAN_OR_EQUAL_OPERATOR;
+                String firstField = tempSB.toString();
+                if (!firstField.contains(".")) {
+                    throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+                }
+                String op;
+                String secondField;
+                if (remainder[i].equals(Finals.GREATER_THAN_OPERATOR)) {
+                    if (remainder[i + 1].equals(Finals.EQUALS_OPERATOR)) {
+                        //>= eset
+                        op = Finals.GREATER_THAN_OR_EQUAL_OPERATOR;
                         i += 2;
+                    } else {
+                        //> eset
+                        op = Finals.GREATER_THAN_OPERATOR;
+                        i++;
                     }
-                    else {
-                        //< eset
-                        op = Finals.LESS_THAN_OPERATOR;
+                } else {
+                    if (remainder[i].equals(Finals.LESS_THAN_OPERATOR)) {
+                        if (remainder[i + 1].equals(Finals.EQUALS_OPERATOR)) {
+                            //<= eset
+                            op = Finals.LESS_THAN_OR_EQUAL_OPERATOR;
+                            i += 2;
+                        } else {
+                            //< eset
+                            op = Finals.LESS_THAN_OPERATOR;
+                            i++;
+                        }
+                    } else {
+                        //= eset
+                        op = Finals.EQUALS_OPERATOR;
                         i++;
                     }
                 }
-                else {
-                    //= eset
-                    op = Finals.EQUALS_OPERATOR;
-                    i++;
-                }
-            }
 
-            System.out.print(firstField + " " + op);
-            //MOST JON AZ EGYENLO UTANI RESZ LEKEZELESE
+                System.out.print(firstField + " " + op);
+                //MOST JON AZ EGYENLO UTANI RESZ LEKEZELESE
 
 
            /*selected.add(new Field("Tabla2", "alma"));
@@ -418,75 +387,72 @@ public class Controller {
             joins.add(new Pair(new Field("Tabla1", "kor"), new Field("Tabla2", "dbszam")));
             joins.add(new Pair(new Field("Tabla1", "id"), new Field("Tabla3", "szam")));
 */
-            if(remainder[i].equals("\"")){
-                //egyenloseget nezunk egy STRINGRE time
-                tempSB.setLength(0);
-                i++;
-                while(!remainder[i].equals("\"")){
-                    tempSB.append(remainder[i]);
+                if (remainder[i].equals("\"")) {
+                    //egyenloseget nezunk egy STRINGRE time
+                    tempSB.setLength(0);
                     i++;
-                }
-                secondField = tempSB.toString();
-                constraints.add(new SelectConstraint(firstField,op,secondField));
-                i+= 2;//atugrok a vesszo utanig
+                    while (!remainder[i].equals("\"")) {
+                        tempSB.append(remainder[i]);
+                        i++;
+                    }
+                    secondField = tempSB.toString();
+                    constraints.add(new SelectConstraint(firstField, op, secondField));
+                    i += 2;//atugrok a vesszo utanig
 
+
+                } else if (isANumber(remainder[i])) {
+                    //egyenloseget nezunk egy SZAMRA time
+                    tempSB.setLength(0);
+                    while (i < remainder.length && isANumber(remainder[i])) {
+                        tempSB.append(remainder[i]);
+                        i++;
+                    }
+                    secondField = tempSB.toString();
+                    constraints.add(new SelectConstraint(firstField, op, secondField));
+                    i++;
+                } else {
+                    //JOIN feltetel masodik elemenek feldolgozasa time
+                    tempSB.setLength(0);
+                    while (i < remainder.length && !remainder[i].equals(Finals.AND_SYNTAX)) {
+                        tempSB.append(remainder[i]);
+                        i++;
+                    }
+                    secondField = tempSB.toString();
+                    if (!secondField.contains(".")) {
+                        throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+                    }
+                    joins.add(new Pair(firstField, secondField));
+                    i++;
+
+                }
+                System.out.println(secondField);
 
             }
-            else if(isANumber(remainder[i])){
-                //egyenloseget nezunk egy SZAMRA time
-                tempSB.setLength(0);
-                while (i < remainder.length && isANumber(remainder[i])){
-                    tempSB.append(remainder[i]);
-                    i++;
-                }
-                secondField = tempSB.toString();
-                constraints.add(new SelectConstraint(firstField,op,secondField));
-                i++;
-            }
-            else {
-                //JOIN feltetel masodik elemenek feldolgozasa time
-                tempSB.setLength(0);
-                while (i < remainder.length && !remainder[i].equals(Finals.AND_SYNTAX)){
-                    tempSB.append(remainder[i]);
-                    i++;
-                }
-                secondField = tempSB.toString();
-                if(!secondField.contains(".")){
-                    throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
-                }
-                joins.add(new Pair(firstField,secondField));
-                i++;
-
-            }
-            System.out.println(secondField);
-
         }
+
 
         //=====================================================================
 
-        Table result = new Table( selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
+        Table result = new Table(selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
 
 
         result.print();
     }
 
 
+    private boolean isANumber(String candidate) {
 
-    private boolean isANumber(String candidate){
-
-        try{
+        try {
             Integer.parseInt(candidate);
-        }
-        catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
         return true;
     }
 
-    public boolean checkPrimaryKeyConstraintOnInsert(String tableName, String value){
+    public boolean checkPrimaryKeyConstraintOnInsert(String tableName, String value) {
 
-        try
-        {
+        try {
             Cursor cursor = null;
             cursor = activeEnviornment.getCursor(tableName);
 
@@ -497,8 +463,7 @@ public class Controller {
 
                 String keyString = new String(foundKey.getData(), "UTF-8");
 
-                if (keyString.equals(value))
-                {
+                if (keyString.equals(value)) {
                     activeEnviornment.closeCursor(cursor);
                     return false;
                 }
@@ -506,17 +471,14 @@ public class Controller {
             }
             activeEnviornment.closeCursor(cursor);
             return true;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public boolean checkUniqueConstraintOnInsert(String tableName, int columnIndex, String value){
-        try
-        {
+    public boolean checkUniqueConstraintOnInsert(String tableName, int columnIndex, String value) {
+        try {
             Cursor cursor = null;
             cursor = activeEnviornment.getCursor(tableName);
 
@@ -526,14 +488,13 @@ public class Controller {
             TableStructure ts = sqlDatabaseStructure.findTable(tableName);
 
             if (ts.getKeyIndex() < columnIndex)
-                columnIndex --;
+                columnIndex--;
 
             while (cursor.getNext(foundKey, foundData, LockMode.DEFAULT) == OperationStatus.SUCCESS) {
 
                 String dataString = new String(foundData.getData(), "UTF-8");
 
-                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex].equals(value))
-                {
+                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex].equals(value)) {
                     activeEnviornment.closeCursor(cursor);
                     return false;
                 }
@@ -541,21 +502,18 @@ public class Controller {
             }
             activeEnviornment.closeCursor(cursor);
             return true;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
     //NEM MUSZAJ: ellenorzes, hogy a forign key referencere nincs-e indextomb
-    public boolean checkForeignKeyConstraintOnInsert(String tableName, int columnIndex, String value){
+    public boolean checkForeignKeyConstraintOnInsert(String tableName, int columnIndex, String value) {
 
         //HA VAN INDEX MEG KELL IRNI
         //..else: (ha nincs index):
-        try
-        {
+        try {
             Cursor cursor = null;
 
             DatabaseEntry foundKey = new DatabaseEntry();
@@ -569,10 +527,10 @@ public class Controller {
             TableStructure ts2 = sqlDatabaseStructure.findTable(tableName2);
 
             if (ts.getKeyIndex() < columnIndex)
-                columnIndex --;
+                columnIndex--;
 
             if (ts2.getKeyIndex() < columnIndex2) {
-                columnIndex2 --;
+                columnIndex2--;
             }
 
             cursor = activeEnviornment.getCursor(tableName2);
@@ -581,8 +539,7 @@ public class Controller {
 
                 String dataString = new String(foundData.getData(), "UTF-8");
 
-                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex2].equals(value))
-                {
+                if (dataString.split(Finals.DATA_DELIMITER)[columnIndex2].equals(value)) {
                     activeEnviornment.closeCursor(cursor);
                     return true;
                 }
@@ -590,53 +547,49 @@ public class Controller {
             }
             activeEnviornment.closeCursor(cursor);
             return false;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
 
     }
 
-    public boolean validateValuesForInsert(String tableName, String[] values)
-    {
+    public boolean validateValuesForInsert(String tableName, String[] values) {
 
         System.out.println(sqlDatabaseStructure);
         System.out.println(sqlDatabaseStructure.findTable(tableName));
         System.out.println(tableName);
         ArrayList<ColumnStructure> columnStructures = sqlDatabaseStructure.findTable(tableName).getColumns();
-        if(values.length != columnStructures.size()){
+        if (values.length != columnStructures.size()) {
             return false;
         }
 
         ColumnStructure columnIterator = null;
-        for(int i = 0; i < values.length; i++){
+        for (int i = 0; i < values.length; i++) {
 
             columnIterator = columnStructures.get(i);
-            if(columnIterator.getType().equals(Finals.INT_TYPE)) {
-                try{
+            if (columnIterator.getType().equals(Finals.INT_TYPE)) {
+                try {
                     int dummy = Integer.parseInt(values[i]);
-                }
-                catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     return false;
                 }
             }
 
-            if(columnIterator.isPrimaryKey()){
-                if(!checkPrimaryKeyConstraintOnInsert(tableName, values[i])){
+            if (columnIterator.isPrimaryKey()) {
+                if (!checkPrimaryKeyConstraintOnInsert(tableName, values[i])) {
                     return false;
                 }
             }
 
-            if(columnIterator.isForeignKey()){
-                if(!checkForeignKeyConstraintOnInsert(tableName, i, values[i])){
+            if (columnIterator.isForeignKey()) {
+                if (!checkForeignKeyConstraintOnInsert(tableName, i, values[i])) {
                     return false;
                 }
             }
 
-            if(columnIterator.isUnique()){
-                if(!checkUniqueConstraintOnInsert(tableName, i, values[i])){
+            if (columnIterator.isUnique()) {
+                if (!checkUniqueConstraintOnInsert(tableName, i, values[i])) {
                     return false;
                 }
             }
@@ -645,51 +598,47 @@ public class Controller {
         return true;
     }
 
-    public String[] getValuesForInsert(String[] words)
-    {
+    public String[] getValuesForInsert(String[] words) {
         String zarojelek = String.join(" ", Arrays.copyOfRange(words, 4, words.length));
         zarojelek = zarojelek.substring(zarojelek.indexOf("(") + 1, zarojelek.indexOf(")"));
 
         String[] values = zarojelek.split(",");
 
-        for (int i = 0; i < values.length; i++)
-        {
+        for (int i = 0; i < values.length; i++) {
             values[i] = values[i].trim();
 
-            if (values[i].substring(0,1).equals("\"") && values[i].substring(values[i].length()-1, values[i].length()).equals("\""))
-            {
-                values[i] = values[i].substring(1,values[i].length()-1);
+            if (values[i].substring(0, 1).equals("\"") && values[i].substring(values[i].length() - 1, values[i].length()).equals("\"")) {
+                values[i] = values[i].substring(1, values[i].length() - 1);
             }
         }
 
         return values;
     }
 
-    private Table createIndexTable(String name) throws Exception{
-        ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true,false,false,null,false);
-        ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE,false,false,false,null, false);
+    private Table createIndexTable(String name) throws Exception {
+        ColumnStructure key = new ColumnStructure("key", Finals.STRING_TYPE, true, false, false, null, false);
+        ColumnStructure data = new ColumnStructure("data", Finals.STRING_TYPE, false, false, false, null, false);
         ArrayList<ColumnStructure> c = new ArrayList<>();
-        c.add(key);c.add(data);
+        c.add(key);
+        c.add(data);
 
-        TableStructure  tableStructure = new TableStructure(name, c);
+        TableStructure tableStructure = new TableStructure(name, c);
 
         return (new Table(tableStructure));
 
     }
 
-    private void convertIndexHashMapToIndexTable(HashMap<String,String> hm, Table indexTable){
+    private void convertIndexHashMapToIndexTable(HashMap<String, String> hm, Table indexTable) {
 
-        for(String key : hm.keySet()){
+        for (String key : hm.keySet()) {
 
             String value = hm.get(key);
-            indexTable.addIndexRecord(key,value);
+            indexTable.addIndexRecord(key, value);
         }
     }
 
-    public void makeIndexFile (String tableName, String columnName)
-    {
-        try
-        {
+    public void makeIndexFile(String tableName, String columnName) {
+        try {
             activeEnviornment.createDB(Finals.INDEX_FILE_NAME + tableName + "_" + columnName); // the index file
 
             Cursor cursor = null;
@@ -700,13 +649,13 @@ public class Controller {
 
 
             Table indexTable = createIndexTable(columnName);
-            HashMap<String,String> indexHM = new HashMap<>();
+            HashMap<String, String> indexHM = new HashMap<>();
             int indexOfIndexedColumn = sqlDatabaseStructure.findTable(tableName).getIndexOfColumn(columnName);
 
-            if(indexOfIndexedColumn == -1){
+            if (indexOfIndexedColumn == -1) {
                 throw new Exception("The column does no exist in the table(index)");
             }
-            if(indexOfIndexedColumn > sqlDatabaseStructure.findTable(tableName).getKeyIndex()){
+            if (indexOfIndexedColumn > sqlDatabaseStructure.findTable(tableName).getKeyIndex()) {
                 indexOfIndexedColumn--;
             }
 
@@ -718,24 +667,21 @@ public class Controller {
                 //System.out.println("Key | Data : " + keyString + " | " + dataString + "");
 
 
-
                 String indexedColumnValue = dataString.split(Finals.DATA_DELIMITER)[indexOfIndexedColumn];
                 ///itt kell elkesziteni az indexfilenak megfelelo szerkezetet
-                if(indexHM.containsKey(indexedColumnValue)){
+                if (indexHM.containsKey(indexedColumnValue)) {
                     String data = indexHM.get(indexedColumnValue);
                     data += Finals.INDEX_DATA_SEPARATOR;
                     data += keyString;
-                    indexHM.replace(indexedColumnValue,data);
-                }
-                else {
-                    indexHM.put(indexedColumnValue,keyString);
+                    indexHM.replace(indexedColumnValue, data);
+                } else {
+                    indexHM.put(indexedColumnValue, keyString);
                 }
             }
             activeEnviornment.closeCursor(cursor);
             convertIndexHashMapToIndexTable(indexHM, indexTable);
 
-            for (int i = 0; i < indexTable.getRecordCount(); i++)
-            {
+            for (int i = 0; i < indexTable.getRecordCount(); i++) {
                 DatabaseEntry key = new DatabaseEntry(indexTable.getKeyBytes(i));
                 DatabaseEntry data = new DatabaseEntry(indexTable.getIndexValueBytes(i));
 
@@ -748,29 +694,26 @@ public class Controller {
             sqlDatabaseStructure.findTable(tableName).findColumn(columnName).setHasIndex(true);
             sqlDatabaseStructure.toJson();
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
     public static boolean deleteDirectory(File directory) {
-        if(directory.exists()){
+        if (directory.exists()) {
             File[] files = directory.listFiles();
-            if(null!=files){
-                for(int i=0; i<files.length; i++) {
-                    if(files[i].isDirectory()) {
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
                         deleteDirectory(files[i]);
-                    }
-                    else {
+                    } else {
                         files[i].delete();
                     }
                 }
             }
         }
-        return(directory.delete());
+        return (directory.delete());
     }
 
     public SQLDatabaseStructure getSqlDatabaseStructure() {
