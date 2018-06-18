@@ -372,7 +372,7 @@ public class Controller {
                     }
                 }
 
-                System.out.print(firstField + " " + op);
+                //System.out.print(firstField + " " + op);
                 //MOST JON AZ EGYENLO UTANI RESZ LEKEZELESE
 
 
@@ -425,7 +425,7 @@ public class Controller {
                     i++;
 
                 }
-                System.out.println(secondField);
+                //System.out.println(secondField);
 
             }
         }
@@ -723,4 +723,17 @@ public class Controller {
         return activeEnviornment;
 
     }
+
+    public void printDatabases() {
+        final File folder = new File("Enviornments");
+
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                System.out.println(fileEntry.getName());
+            }
+        }
+    }
+
+
+
 }
