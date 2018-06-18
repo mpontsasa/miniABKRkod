@@ -5,6 +5,8 @@ import java.util.*;
 
 public class Main {
 
+
+
     public static void userInterraction(Controller controller) throws Exception {
 
         System.out.println("Isten hozott a Sasa és Matyi fantsztikusan hatékony full table scan mentes adatbázis kezelő rendszerébe!");
@@ -25,6 +27,7 @@ public class Main {
                 controller.parseSQL(userCommand);
             } catch (Exception e) {
                 System.out.println("Ez a parancs hibas :(...");
+                e.printStackTrace();
             }
         }
     }
@@ -90,6 +93,7 @@ public class Main {
 
 
             //System.out.println(controller.getSqlDatabaseStructure());
+
 
 
 

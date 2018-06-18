@@ -6,7 +6,11 @@ public class GroupByConstraint {
     private ArrayList<SQLFunction> functions;
 
 
-    private void addFunction(SQLFunction f) {
+    public GroupByConstraint() {
+        functions = new ArrayList<>();
+    }
+
+    public void addFunction(SQLFunction f) {
         functions.add(f);
     }
 
