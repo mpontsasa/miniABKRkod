@@ -467,6 +467,9 @@ public class Controller {
 
 
         }
+        if(i < words.length){
+            groupByIndex = i;
+        }
 
         ///JON A GROUP BY RESZE
         ArrayList<HavingConstraint> havingConstraints = new ArrayList<>();
@@ -596,7 +599,7 @@ public class Controller {
 
         //=====================================================================
 
-        Table result = new Table(selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
+        Table result = new Table(selected, joins, constraints, groupByConstraint, havingConstraints, sqlDatabaseStructure, activeEnviornment);
 
 
 

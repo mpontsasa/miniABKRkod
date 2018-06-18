@@ -40,7 +40,7 @@ public class SelectConstraint {
         if (!firstField.getTableName().equals(ts.getName()))
             return true;
 
-        if (operand.equals(Finals.EQUALS_OPERATOR))
+        /*if (operand.equals(Finals.EQUALS_OPERATOR))
         {
             if (temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())].equals(secondField))
             {
@@ -55,7 +55,42 @@ public class SelectConstraint {
         {
             //other operators
             return false;
+        }*/
+
+        switch (operand)
+        {
+            case Finals.EQUALS_OPERATOR:
+                if (temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())].equals(secondField))
+                {
+                    return true;
+                }
+                break;
+            case Finals.LESS_THAN_OPERATOR:
+                if (Integer.parseInt(temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())]) < Integer.parseInt(secondField))
+                {
+                    return true;
+                }
+                break;
+            case Finals.GREATER_THAN_OPERATOR:
+                if (Integer.parseInt(temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())]) > Integer.parseInt(secondField))
+                {
+                    return true;
+                }
+                break;
+            case Finals.LESS_THAN_OR_EQUAL_OPERATOR:
+                if (Integer.parseInt(temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())]) <= Integer.parseInt(secondField))
+                {
+                    return true;
+                }
+                break;
+            case Finals.GREATER_THAN_OR_EQUAL_OPERATOR:
+                if (Integer.parseInt(temp.getData().get(0)[temp.getIndexOfColumn(firstField.getFieldName())]) >= Integer.parseInt(secondField))
+                {
+                    return true;
+                }
+                break;
         }
+        return false;
 
     }
 }

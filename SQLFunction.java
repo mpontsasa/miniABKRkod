@@ -27,4 +27,7 @@ public class SQLFunction {
 
     public void evaluate(int value){}
 
+
+
+
 }

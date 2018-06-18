@@ -1,8 +1,10 @@
+import java.lang.reflect.Parameter;
+
 public class OneGroupXFunction {
 
     private Integer partResult;
     private Integer counter;//used in AVG() and COUNT()
-    private Field groupArg;
+    //private Field groupArg;
 
     OneGroupXFunction(String functionName)
     {
@@ -16,10 +18,10 @@ public class OneGroupXFunction {
                 partResult = 0;
                 break;
             case("MIN"):
-                partResult = null;
+                partResult = Integer.MAX_VALUE;
                 break;
             case("MAX"):
-                partResult = null;
+                partResult  = Integer.MIN_VALUE;
                 break;
             case("COUNT"):
                 partResult = null;
@@ -31,7 +33,48 @@ public class OneGroupXFunction {
         return partResult;
     }
 
-    public void getResult(int value){}
+    public String getResult(String functionType){
+        switch(functionType)
+        {
+            case("SUM"):
+                return "" + partResult;
+            case("AVG"):
+                return "" + (float)partResult/(float)counter;
 
-    public void evaluate(int value){}
+            case("MIN"):
+            case("MAX"):
+                return "" + partResult;
+
+            case("COUNT"):
+                return "" + counter;
+        }
+        return null;
+    }
+
+    public void evaluate(int value, String functionType){
+
+        switch(functionType)
+        {
+            case("SUM"):
+                partResult += value;
+                break;
+            case("AVG"):
+                partResult += value;
+                counter++;
+                break;
+            case("MIN"):
+                if(value < partResult){
+                    partResult = value;
+                }
+                break;
+            case("MAX"):
+                if(value > partResult){
+                    partResult = value;
+                }
+                break;
+            case("COUNT"):
+                counter++;
+                break;
+        }
+    }
 }

@@ -50,6 +50,7 @@ public class Main {
                 controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas30\",20, 30, \"ghetto masters\", 8547)");
                 controller.parseSQL("insert into Tabla1 values (\"Foszto MatyasTeszteliAzIndexBeszurast\",67, 67, \"ghetto masters\", 8547)");
                 controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas77\",20, 77, \"ghetto masters\", 8547)");
+                controller.parseSQL("insert into Tabla1 values (\"Foszto Matyas3\",3, 3, \"ghetto masters\", 3333)");
 
                 controller.parseSQL("create index testnev on Tabla1 kedvencCsapat");
 
@@ -65,14 +66,11 @@ public class Main {
 
             }
             else {
-                userInterraction(controller);
-                /*
-                controller.parseSQL("use szia");
+                //controller.parseSQL("use szia");
 
-                /*controller.parseSQL(
-                        "select a.oi b.csa   c.brah frOm szia egy ketto where a.hello=\"szeerusz fiuu\" , b.azigen=5 ," +
-                                " c.jojo=99, a.oi =  b.oi");*/
                 userInterraction(controller);
+                
+
             }
 
 

@@ -1,5 +1,6 @@
 import com.sleepycat.je.*;
 
+import javax.print.attribute.HashAttributeSet;
 import java.io.ByteArrayOutputStream;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -10,7 +11,10 @@ public class Table {
     private TableStructure structure;
     private ArrayList<String[]> data;
 
-    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints, GroupByConstraint gbconstraint, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment) throws Exception// a constraints nem pairs hanem Constraint lesz
+    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints,
+                 GroupByConstraint gbConstraint, ArrayList<HavingConstraint> havingConstraints,
+                 SQLDatabaseStructure sqlDatabaseStructure,
+                 ActiveEnviornment activeEnviornment) throws Exception// a constraints nem pairs hanem Constraint lesz
     {
         //......................................beallitom az elso tablanak
         structure = new TableStructure(sqlDatabaseStructure.findTable(selected.get(0).getTableName()));
@@ -64,13 +68,16 @@ public class Table {
 
             }
 
-            for(SQLFunction f : gbconstraint.getFunctions())
+            if (gbConstraint.getField() != null)
             {
-                if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
-                    need = true;
+                for(SQLFunction f : gbConstraint.getFunctions())
+                {
+                    if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
+                        need = true;
+                }
             }
 
-            if (cs.getName().equals(gbconstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbconstraint.getField().getTableName()))
+            if (gbConstraint.getField() != null && cs.getName().equals(gbConstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbConstraint.getField().getTableName()))
                 need = true;
 
             if (!need)
@@ -124,13 +131,14 @@ public class Table {
 
                 }
 
-                for(SQLFunction f : gbconstraint.getFunctions())
-                {
-                    if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
-                    need = true;
+                if (gbConstraint.getField() != null) {
+                    for (SQLFunction f : gbConstraint.getFunctions()) {
+                        if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
+                            need = true;
+                    }
                 }
 
-                if (cs.getName().equals(gbconstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbconstraint.getField().getTableName()))
+                if (gbConstraint.getField() != null && cs.getName().equals(gbConstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbConstraint.getField().getTableName()))
                     need = true;
 
 
@@ -144,15 +152,97 @@ public class Table {
 
         //Innen kezdodik a group by
 
-        for (int i = 0; i < data.size(); i ++)
-        {
-            for (SQLFunction f : gbconstraint.getFunctions())
-            {
-                f.evaluate(Integer.parseInt(data.get(i)[getIndexOfColumn(f.getArgument().getFieldName())]));
+        if(gbConstraint.getField() != null){
+
+            for (String[] aData : data) {
+                gbConstraint.evaluate(aData, structure);
             }
+
+            Table a = new Table(gbConstraint, havingConstraints);
+            structure = a.structure;
+            data = a.data;
         }
 
 
+    }
+
+    private boolean checkHavingConstraint(ArrayList<HavingConstraint> havingConstraints,  SQLFunction function,
+                                          String value) {
+
+        for(HavingConstraint constraint : havingConstraints){
+            if(function.getFunctionName().equals(constraint.getFunction().getFunctionName())&&
+                    function.getArgument().getTableName().equals(constraint.getFunction().getArgument().getTableName())&&
+                    function.getArgument().getFieldName().equals(constraint.getFunction().getArgument().getFieldName())){
+                switch (constraint.getOperator()){
+                    case Finals.EQUALS_OPERATOR:
+                        if(!constraint.getLiteral().equals(value)){
+                            return false;
+                        }
+                        break;
+                    case Finals.GREATER_THAN_OPERATOR:
+                        if(!(Integer.parseInt(constraint.getLiteral()) < Integer.parseInt(value))){
+                            return false;
+                        }
+                        break;
+                    case Finals.LESS_THAN_OPERATOR:
+                        if(!(Integer.parseInt(constraint.getLiteral()) > Integer.parseInt(value))){
+                            return false;
+                        }
+                        break;
+                    case Finals.LESS_THAN_OR_EQUAL_OPERATOR:
+                        if(!(Integer.parseInt(constraint.getLiteral()) >= Integer.parseInt(value))){
+                            return false;
+                        }
+                        break;
+                    case Finals.GREATER_THAN_OR_EQUAL_OPERATOR:
+                        if(!(Integer.parseInt(constraint.getLiteral()) <= Integer.parseInt(value))){
+                            return false;
+                        }
+                        break;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public Table(GroupByConstraint groupByConstraint, ArrayList<HavingConstraint> havingConstraints) throws Exception{
+
+        ArrayList<ColumnStructure> columns = new ArrayList<>();
+
+        columns.add(new ColumnStructure(groupByConstraint.getField().getFieldName(),Finals.STRING_TYPE,true,
+                false,false,null,false));
+
+        ArrayList<SQLFunction> functions = groupByConstraint.getFunctions();
+        for(int i = 0; i <functions.size(); i++){
+            String colName= functions.get(i).getFunctionName() + "(" + functions.get(i).getArgument().getFieldName() +
+                    ")";
+
+            columns.add(new ColumnStructure(colName,Finals.STRING_TYPE,
+                    false,false,false,null,false));
+        }
+
+        structure = new TableStructure("temp0396832",columns);
+        data = new ArrayList<>();
+
+
+        ArrayList<Group> groups = groupByConstraint.getGroups();
+        for(int i = 0 ; i < groups.size(); i++){
+                String[] row = new String[structure.getNumberOfColumns()];
+                row[0] = groups.get(i).getGroupIdentifier();
+                int r;
+                for(r = 1; r < structure.getNumberOfColumns(); r++){
+
+                    String functionType = functions.get(r-1).getFunctionName();
+                    if (!checkHavingConstraint(havingConstraints,functions.get(r-1),groups.get(i).getgXfs().get(r-1).getResult(functionType)))
+                    {
+                        break;
+                    }
+                    row[r] = groups.get(i).getgXfs().get(r-1).getResult(functionType);
+                }
+                if (r == structure.getNumberOfColumns())
+                    data.add(row);
+        }
     }
 
     public Table(TableStructure structure) {
