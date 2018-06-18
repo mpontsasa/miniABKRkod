@@ -327,7 +327,8 @@ public class Controller {
             rem = rem.replaceAll(" ", "");
             String[] remainder = rem.split("");
             i = 0;
-            while (i < remainder.length) {
+            while (i < remainder.length && !(remainder[i].equalsIgnoreCase("group")&&
+                                            remainder[i + 1].equalsIgnoreCase("by"))) {
                 tempSB.setLength(0);
 
                 while ((i < remainder.length) &&
@@ -428,6 +429,8 @@ public class Controller {
                 //System.out.println(secondField);
 
             }
+
+            System.out.println();
         }
 
 
