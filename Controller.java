@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.nio.channels.SelectableChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -274,6 +275,29 @@ public class Controller {
 
     }
 
+    public SQLFunction peelFunction(String rawFunction) {
+
+        String[] rawArray = rawFunction.split("");
+        StringBuilder stringBuilder = new StringBuilder();
+        String functionName;
+
+        int  i =0;
+        while(!rawArray[i].equalsIgnoreCase("(")){
+            stringBuilder.append(rawArray[i]);
+            i++;
+        }
+        functionName = stringBuilder.toString();
+        stringBuilder.setLength(0);
+        i++;
+
+        while(!rawArray[i].equalsIgnoreCase(")")){
+            stringBuilder.append(rawArray[i]);
+            i++;
+        }
+        Field field = new Field(stringBuilder.toString());
+        return (new SQLFunction(functionName,field));
+    }
+
     public void selectCommand(String[] words) throws Exception {
         // SELECT tabla1.mezo1 tabla2.mezo2 FROM tabla1 tabla2 WHERE tabla1.mezo1=tabla2.mezo2
         if (!activeEnviornment.isSetUp()) {
@@ -283,17 +307,25 @@ public class Controller {
         ArrayList<String> selectedFields = new ArrayList<>();
         ArrayList<String> selectionTables = new ArrayList<>();
         ArrayList<String> selectionConstraints = new ArrayList<>();
+        GroupByConstraint groupByConstraint = new GroupByConstraint();
 
         int i;
         for (i = 1; i < words.length && !words[i].equalsIgnoreCase("FROM"); i++) {
-            selectedFields.add(words[i]);
+
+            if(words[i].contains("(") && words[i].contains(")")) {
+                groupByConstraint.addFunction(peelFunction(words[i]));
+            }
+            else{
+                selectedFields.add(words[i]);
+            }
+
         }
 
         if (i == words.length) {
             throw new InvalidSQLCommandException("Missing FROM statement");
         }
 
-        for (i++; i < words.length && !words[i].equalsIgnoreCase("WHERE") && !words[i].equalsIgnoreCase("WHERE"); i++) {
+        for (i++; i < words.length && !words[i].equalsIgnoreCase("WHERE") && !words[i].equalsIgnoreCase("group"); i++) {
             selectionTables.add(words[i]);
         }
 
@@ -305,6 +337,7 @@ public class Controller {
         ArrayList<Field> selected = new ArrayList<>();
 
 
+
         //selected felepitese
         for (String s : selectedFields) {
             if (!s.contains(".")) {
@@ -314,21 +347,23 @@ public class Controller {
             }
         }
 
-        //lekezelem azt az esetet ha mar nincs join, azaz feldolgoztuk az egesz select parancsot
-        if (i != words.length) {
+        int groupByIndex = -1;
+        //lekezelem azt az esetet ha mar nincs join vagy feldolgoztuk az egesz select parancsot
+        if (i != words.length && words[i].equalsIgnoreCase("where")) {
 
             //constraint es join parseolas
             StringBuilder tempSB = new StringBuilder();
-            for (i++; i < words.length; i++) {
+            for (i++; i < words.length&& !(words[i].equalsIgnoreCase("group")&&
+                    words[i + 1].equalsIgnoreCase("by")); i++) {
                 tempSB.append(words[i]);
                 tempSB.append(" ");
             }
+            groupByIndex = i;//saving the index of the "group by"
             String rem = tempSB.toString();
             rem = rem.replaceAll(" ", "");
             String[] remainder = rem.split("");
             i = 0;
-            while (i < remainder.length && !(remainder[i].equalsIgnoreCase("group")&&
-                                            remainder[i + 1].equalsIgnoreCase("by"))) {
+            while (i < remainder.length ) {
                 tempSB.setLength(0);
 
                 while ((i < remainder.length) &&
@@ -430,13 +465,140 @@ public class Controller {
 
             }
 
-            System.out.println();
+
         }
 
+        ///JON A GROUP BY RESZE
+        ArrayList<HavingConstraint> havingConstraints = new ArrayList<>();
+        i = groupByIndex;
+        if(i != -1 && i < words.length) {
+            //VAN EGY GROUP BY-UNK
+            System.out.println("group by time! " + words[i]);
+            i += 2;
+            System.out.println(words[i]);
+            groupByConstraint.setField(new Field(words[i]));
+
+            i++;
+            if(i < words.length && words[i].equalsIgnoreCase("having")) {
+                System.out.println("having time!");
+                StringBuilder tempSB = new StringBuilder();
+                for (i++; i < words.length; i++) {
+                    tempSB.append(words[i]);
+                    tempSB.append(" ");
+                }
+                groupByIndex = i;//saving the index of the "group by"
+                String rem = tempSB.toString();
+                rem = rem.replaceAll(" ", "");
+                String[] remainder = rem.split("");
+                i = 0;
+                while (i < remainder.length ) {
+                    tempSB.setLength(0);
+
+
+
+                    while ((i < remainder.length) &&
+                            (!remainder[i].equals(Finals.EQUALS_OPERATOR)) &&
+                            (!remainder[i].equals(Finals.LESS_THAN_OPERATOR)) &&
+                            (!remainder[i].equals(Finals.GREATER_THAN_OPERATOR))) {
+
+                        tempSB.append(remainder[i]);
+                        i++;
+                    }
+                    String firstField = tempSB.toString();
+                    HavingConstraint havingConstraint = new HavingConstraint();
+                    if(firstField.contains("(") && firstField.contains(")")) {
+                        havingConstraint.setFunction(peelFunction(firstField));
+                    }
+                    else
+                    {
+                        if (!firstField.contains(".")) {
+                            throw new InvalidSQLCommandException("A field does not contain a dot for example table1.id");
+                        }
+                    }
+
+                    String op;
+                    String secondField;
+                    if (remainder[i].equals(Finals.GREATER_THAN_OPERATOR)) {
+                        if (remainder[i + 1].equals(Finals.EQUALS_OPERATOR)) {
+                            //>= eset
+                            op = Finals.GREATER_THAN_OR_EQUAL_OPERATOR;
+                            i += 2;
+                        } else {
+                            //> eset
+                            op = Finals.GREATER_THAN_OPERATOR;
+                            i++;
+                        }
+                    } else {
+                        if (remainder[i].equals(Finals.LESS_THAN_OPERATOR)) {
+                            if (remainder[i + 1].equals(Finals.EQUALS_OPERATOR)) {
+                                //<= eset
+                                op = Finals.LESS_THAN_OR_EQUAL_OPERATOR;
+                                i += 2;
+                            } else {
+                                //< eset
+                                op = Finals.LESS_THAN_OPERATOR;
+                                i++;
+                            }
+                        } else {
+                            //= eset
+                            op = Finals.EQUALS_OPERATOR;
+                            i++;
+                        }
+                    }
+
+
+                    if (remainder[i].equals("\"")) {
+                        //egyenloseget nezunk egy STRINGRE time
+                        tempSB.setLength(0);
+                        i++;
+                        while (!remainder[i].equals("\"")) {
+                            tempSB.append(remainder[i]);
+                            i++;
+                        }
+                        secondField = tempSB.toString();
+                        if(!firstField.contains("(")){
+                            constraints.add(new SelectConstraint(firstField, op, secondField));
+                        }else {
+                            havingConstraint.setLiteral(secondField);
+                            havingConstraint.setOperator(op);
+                        }
+
+                        i += 2;//atugrok a vesszo utanig
+
+
+                    } else if (isANumber(remainder[i])) {
+                        //egyenloseget nezunk egy SZAMRA time
+                        tempSB.setLength(0);
+                        while (i < remainder.length && isANumber(remainder[i])) {
+                            tempSB.append(remainder[i]);
+                            i++;
+                        }
+                        secondField = tempSB.toString();
+                        if(!firstField.contains("(")){
+                            constraints.add(new SelectConstraint(firstField, op, secondField));
+                        }else {
+                            havingConstraint.setLiteral(secondField);
+                            havingConstraint.setOperator(op);
+                        }
+                        i++;
+                    }
+                    //System.out.println(secondField);
+
+                    if(!havingConstraint.isEmpty())
+                    {
+                        havingConstraints.add(havingConstraint);
+                    }
+
+                }
+            }
+
+        }
 
         //=====================================================================
 
         Table result = new Table(selected, joins, constraints, sqlDatabaseStructure, activeEnviornment);
+
+
 
 
         result.print();
