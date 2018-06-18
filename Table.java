@@ -13,7 +13,7 @@ public class Table {
     public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment) throws Exception// a constraints nem pairs hanem Constraint lesz
     {
         //......................................beallitom az elso tablanak
-        structure = sqlDatabaseStructure.findTable(selected.get(0).getTableName());
+        structure = new TableStructure(sqlDatabaseStructure.findTable(selected.get(0).getTableName()));
         data = new ArrayList<>();
         try
         {
@@ -28,7 +28,7 @@ public class Table {
                 boolean isOk = true;
                 for (SelectConstraint sc : constraints)
                 {
-                    if (sc.checkConstrant(sqlDatabaseStructure.findTable(selected.get(0).getTableName()), foundKey, foundData))
+                    if (!sc.checkConstrant(sqlDatabaseStructure.findTable(selected.get(0).getTableName()), foundKey, foundData))
                     {
                         isOk = false;
                         break;
@@ -87,7 +87,7 @@ public class Table {
             Pair p = joins.get(joinIndex);
             joins.remove(joinIndex);
 
-            hashJoin(p, sqlDatabaseStructure);
+            hashJoin(p, sqlDatabaseStructure, constraints);
 
             for(int j = 0; j < structure.getColumns().size(); j++)
             {
@@ -121,8 +121,11 @@ public class Table {
                     j--;
                 }
             }
-
         }
+
+        //Innen kezdodik a group by
+
+
     }
 
     public Table(TableStructure structure) {
@@ -158,7 +161,7 @@ public class Table {
         return -1;
     }
 
-    public void hashJoin(Pair p, SQLDatabaseStructure sqlDatabaseStructure)
+    public void hashJoin(Pair p, SQLDatabaseStructure sqlDatabaseStructure, ArrayList<SelectConstraint> constraints)
     {
 
         ArrayList<Integer>[] firstHashes = new ArrayList[Finals.NR_OF_HASHES];
@@ -203,8 +206,21 @@ public class Table {
                 {
                         if (data.get(firstHashes[kat].get(first))[firstJoinIndex].equals(tempTable.getData().get(0)[secondJoinIndex]))
                         {
-                            String[] record = mergeRecord(data.get(firstHashes[kat].get(first)), tempTable.getData().get(0));
-                            newData.add(record);
+
+
+                            boolean isOk = true;
+                            for (SelectConstraint sc : constraints)
+                            {
+                                if (!sc.checkConstrant(sqlDatabaseStructure.findTable(p.getSecond().getTableName()), foundKey, foundData))
+                                {
+                                    isOk = false;
+                                    break;
+                                }
+                            }
+                            if(isOk) {
+                                String[] record = mergeRecord(data.get(firstHashes[kat].get(first)), tempTable.getData().get(0));
+                                newData.add(record);
+                            }
                         }
                 }
 

@@ -53,12 +53,12 @@ public class Main {
             }
             else {
                 controller.parseSQL("use szia");
-                controller.parseSQL("select Tabla1.nev from Tabla1");
+                //controller.parseSQL("select Tabla2.alma Tabla1.nev Tabla3.szo from Tabla1 Tabla2 Tabla3 where Tabla3.szam=Tabla2.dbszam, Tabla2.korte=Tabla1.kedvencCsapat , Tabla3.szam=20");
 
                 /*controller.parseSQL(
                         "select a.oi b.csa   c.brah frOm szia egy ketto where a.hello=\"szeerusz fiuu\" , b.azigen=5 ," +
                                 " c.jojo=99, a.oi =  b.oi");*/
-
+                userInterraction(controller);
             }
 
 

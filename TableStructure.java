@@ -34,6 +34,12 @@ public class TableStructure {
 
     }
 
+    public TableStructure(TableStructure ts){
+        name = ts.name;
+        columns = new ArrayList<>(ts.columns);
+        keyIndex = ts.keyIndex;
+    }
+
     public void removeColumnByName(String columnName) throws Exception
     {
         removeColumn(getColumnStructure(getIndexOfColumn(columnName)));
