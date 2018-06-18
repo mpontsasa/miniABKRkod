@@ -6,7 +6,6 @@ public class OneGroupXFunction {
 
     OneGroupXFunction(String functionName)
     {
-
         counter = 0;
         switch(functionName)
         {
