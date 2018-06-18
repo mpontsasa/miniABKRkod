@@ -65,12 +65,11 @@ public class Main {
                 userInterraction(controller);
                 /*
                 controller.parseSQL("use szia");
-                controller.parseSQL("select Tabla1.nev from Tabla1");
-*/
+
                 /*controller.parseSQL(
                         "select a.oi b.csa   c.brah frOm szia egy ketto where a.hello=\"szeerusz fiuu\" , b.azigen=5 ," +
                                 " c.jojo=99, a.oi =  b.oi");*/
-
+                userInterraction(controller);
             }
 
 

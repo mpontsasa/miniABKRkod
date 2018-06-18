@@ -442,7 +442,6 @@ public class Controller {
         result.print();
     }
 
-
     private boolean isANumber(String candidate) {
 
         try {
