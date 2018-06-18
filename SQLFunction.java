@@ -2,15 +2,11 @@ public class SQLFunction {
 
     private String functionName;
     private Field argument;
-    private Integer partResult;
-    private Integer counter;//used in AVG()
-    private Integer result;
 
 
     public SQLFunction(String functionName, Field argument) {
-        this.functionName = functionName;
+        this.functionName = functionName.toUpperCase();
         this.argument = argument;
-        partResult = counter = result = 0;
     }
 
     public String getFunctionName() {
@@ -29,11 +25,6 @@ public class SQLFunction {
         this.argument = argument;
     }
 
-    public Integer getPartResult() {
-        return partResult;
-    }
+    public void evaluate(int value){}
 
-    public void evaluate(int evaluationOption){}
-
-    public void getResult(int evaluationOption){}
 }

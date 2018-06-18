@@ -10,7 +10,7 @@ public class Table {
     private TableStructure structure;
     private ArrayList<String[]> data;
 
-    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment) throws Exception// a constraints nem pairs hanem Constraint lesz
+    public Table(ArrayList<Field> selected, ArrayList<Pair> joins, ArrayList<SelectConstraint> constraints, GroupByConstraint gbconstraint, SQLDatabaseStructure sqlDatabaseStructure, ActiveEnviornment activeEnviornment) throws Exception// a constraints nem pairs hanem Constraint lesz
     {
         //......................................beallitom az elso tablanak
         structure = new TableStructure(sqlDatabaseStructure.findTable(selected.get(0).getTableName()));
@@ -64,6 +64,15 @@ public class Table {
 
             }
 
+            for(SQLFunction f : gbconstraint.getFunctions())
+            {
+                if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
+                    need = true;
+            }
+
+            if (cs.getName().equals(gbconstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbconstraint.getField().getTableName()))
+                need = true;
+
             if (!need)
             {
                 removeColumn(cs.getName());
@@ -115,6 +124,16 @@ public class Table {
 
                 }
 
+                for(SQLFunction f : gbconstraint.getFunctions())
+                {
+                    if (cs.getName().equals(f.getArgument().getFieldName()) && selected.get(0).getTableName().equals(f.getArgument().getTableName()))
+                    need = true;
+                }
+
+                if (cs.getName().equals(gbconstraint.getField().getFieldName()) && selected.get(0).getTableName().equals(gbconstraint.getField().getTableName()))
+                    need = true;
+
+
                 if (!need)
                 {
                     removeColumn(cs.getName());
@@ -124,6 +143,14 @@ public class Table {
         }
 
         //Innen kezdodik a group by
+
+        for (int i = 0; i < data.size(); i ++)
+        {
+            for (SQLFunction f : gbconstraint.getFunctions())
+            {
+                f.evaluate(Integer.parseInt(data.get(i)[getIndexOfColumn(f.getArgument().getFieldName())]));
+            }
+        }
 
 
     }

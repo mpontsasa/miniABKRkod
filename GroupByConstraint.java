@@ -4,6 +4,7 @@ public class GroupByConstraint {
 
     private Field field;
     private ArrayList<SQLFunction> functions;
+    private ArrayList<Group> groups
 
 
     private void addFunction(SQLFunction f) {
